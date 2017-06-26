@@ -1,0 +1,20 @@
+# The app
+django-calaccess-raw-data==1.5.2
+Django>=1.9
+hurry.filesize
+pytz
+beautifulsoup4
+-e git+https://github.com/california-civic-data-coalition/python-opencivicdata-django.git@HEAD#egg=python-opencivicdata
+
+# Databases
+psycopg2>=2.5.4
+
+# Testing
+flake8
+flake8_docstrings
+coverage
+python-coveralls
+
+# Packaging
+wheel
+twine
