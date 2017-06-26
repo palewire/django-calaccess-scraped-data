@@ -18,7 +18,6 @@ class ScrapedDataVersionAdmin(BaseAdmin):
         "id",
         "process_start_datetime",
         "process_finish_datetime",
-        "pretty_zip_size",
     )
     list_display_links = ('process_start_datetime',)
     list_filter = ("process_finish_datetime",)

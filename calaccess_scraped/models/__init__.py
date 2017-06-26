@@ -10,21 +10,21 @@ from .base import (
     BaseScrapedElection,
     BaseScrapedCommittee,
 )
-# from .candidates import (
-#     ScrapedCandidate,
-#     CandidateScrapedElection,
-#     ScrapedCandidateCommittee,
-# )
-# from .incumbents import (
-#     ScrapedIncumbent,
-#     IncumbentScrapedElection,
-# )
-# from .propositions import (
-#     ScrapedProposition,
-#     PropositionScrapedElection,
-#     ScrapedPropositionCommittee,
-# )
-# from .tracking import ScrapedDataVersion
+from .candidates import (
+    ScrapedCandidate,
+    CandidateScrapedElection,
+    ScrapedCandidateCommittee,
+)
+from .incumbents import (
+    ScrapedIncumbent,
+    IncumbentScrapedElection,
+)
+from .propositions import (
+    ScrapedProposition,
+    PropositionScrapedElection,
+    ScrapedPropositionCommittee,
+)
+from .tracking import ScrapedDataVersion
 
 __all__ = (
     'CalAccessMetaClass',

@@ -8,17 +8,17 @@ from django.test import TestCase
 from calaccess_scraped.management.commands import CalAccessCommand
 
 
-class ProcessedDataCommandsTest(TestCase):
+class ScrapedDataCommandsTest(TestCase):
     """
     Run and test management commands.
     """
     fixtures = [
-        'candidate_scraped_elections.json',
-        'scraped_candidates.json',
-        'incumbent_scraped_elections.json',
-        'scraped_incumbents.json',
-        'proposition_scraped_elections.json',
-        'scraped_propositions.json',
+        'calaccess_scraped/fixtures/candidate_scraped_elections.json',
+        'calaccess_scraped/fixtures/scraped_candidates.json',
+        'calaccess_scraped/fixtures/incumbent_scraped_elections.json',
+        'calaccess_scraped/fixtures/scraped_incumbents.json',
+        'calaccess_scraped/fixtures/proposition_scraped_elections.json',
+        'calaccess_scraped/fixtures/scraped_propositions.json',
     ]
 
     def test_commands(self):
