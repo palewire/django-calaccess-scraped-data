@@ -5,6 +5,7 @@ Models for tracking processing of CAL-ACCESS snapshots over time.
 """
 from __future__ import unicode_literals
 from django.db import models
+from datetime import datetime
 from django.utils.encoding import python_2_unicode_compatible
 
 
@@ -16,7 +17,8 @@ class ScrapedDataVersion(models.Model):
     process_start_datetime = models.DateTimeField(
         null=True,
         verbose_name='date and time processing started',
-        help_text='Date and time when the scraping started'
+        help_text='Date and time when the scraping started',
+        default=datetime.now,
     )
     process_finish_datetime = models.DateTimeField(
         null=True,
