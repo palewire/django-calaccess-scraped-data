@@ -38,15 +38,6 @@ class CalAccessCommand(BaseCommand):
         # Start the clock
         self.start_datetime = timezone.now()
 
-    def get_scraped_version(self):
-        """
-        Get or create the current processed version.
-
-        Return a tuple (ProcessedDataVersion object, created), where
-        created is a boolean specifying whether a version was created.
-        """
-        return ScrapedDataVersion.objects.create()
-
     def header(self, string):
         """
         Writes out a string to stdout formatted to look like a header.
@@ -156,6 +147,15 @@ class ScrapeCommand(CalAccessCommand):
             self.flush()
         results = self.scrape()
         self.save(results)
+
+    def get_scraped_version(self):
+        """
+        Get or create the current processed version.
+
+        Return a tuple (ProcessedDataVersion object, created), where
+        created is a boolean specifying whether a version was created.
+        """
+        return ScrapedDataVersion.objects.create()
 
     @retry(requests.exceptions.RequestException)
     def get_url(self, url, retries=1, request_type='GET'):

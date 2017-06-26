@@ -4,11 +4,11 @@
 Scrape list of incumbent state officials for each election on CAL-ACCESS site.
 """
 import re
-from six.moves.urllib.parse import urljoin
-from datetime import datetime
 from time import sleep
-from calaccess_processed.management.commands import ScrapeCommand
-from calaccess_processed.models import (
+from datetime import datetime
+from six.moves.urllib.parse import urljoin
+from calaccess_scraped.management.commands import ScrapeCommand
+from calaccess_scraped.models import (
     ScrapedIncumbent,
     IncumbentScrapedElection
 )
