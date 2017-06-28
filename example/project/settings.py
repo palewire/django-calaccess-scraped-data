@@ -27,8 +27,6 @@ INSTALLED_APPS = (
     'django.contrib.gis',
     'calaccess_scraped',
     'toolbox',
-    'opencivicdata.core.apps.BaseConfig',
-    'opencivicdata.elections.apps.BaseConfig',
 )
 
 MIDDLEWARE_CLASSES = (
