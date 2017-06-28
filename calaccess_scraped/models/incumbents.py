@@ -13,7 +13,7 @@ from .base import (
 
 
 @python_2_unicode_compatible
-class ScrapedIncumbent(BaseScrapedModel):
+class Incumbent(BaseScrapedModel):
     """
     An incumbent state official scraped from the California Secretary of State's site.
     """
@@ -42,7 +42,7 @@ class ScrapedIncumbent(BaseScrapedModel):
 
 
 @python_2_unicode_compatible
-class IncumbentScrapedElection(BaseScrapedElection):
+class IncumbentElection(BaseScrapedElection):
     """
     An election day scraped as part of the `scrapecalaccessincumbents` command.
     """

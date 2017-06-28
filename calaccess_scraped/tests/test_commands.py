@@ -13,12 +13,12 @@ class ScrapedDataCommandsTest(TestCase):
     Run and test management commands.
     """
     fixtures = [
-        'calaccess_scraped/fixtures/candidate_scraped_elections.json',
-        'calaccess_scraped/fixtures/scraped_candidates.json',
-        'calaccess_scraped/fixtures/incumbent_scraped_elections.json',
-        'calaccess_scraped/fixtures/scraped_incumbents.json',
-        'calaccess_scraped/fixtures/proposition_scraped_elections.json',
-        'calaccess_scraped/fixtures/scraped_propositions.json',
+        'calaccess_scraped/fixtures/candidate_election.json',
+        'calaccess_scraped/fixtures/candidate.json',
+        'calaccess_scraped/fixtures/incumbent_election.json',
+        'calaccess_scraped/fixtures/incumbent.json',
+        'calaccess_scraped/fixtures/proposition_election.json',
+        'calaccess_scraped/fixtures/proposition.json',
     ]
 
     def test_commands(self):

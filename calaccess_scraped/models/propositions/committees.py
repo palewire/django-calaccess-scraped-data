@@ -10,7 +10,7 @@ from calaccess_scraped.models.base import BaseScrapedCommittee
 
 
 @python_2_unicode_compatible
-class ScrapedPropositionCommittee(BaseScrapedCommittee):
+class PropositionCommittee(BaseScrapedCommittee):
     """
     A committee supporting or opposing a proposition scraped from the California Secretary of State's site.
     """
@@ -18,7 +18,7 @@ class ScrapedPropositionCommittee(BaseScrapedCommittee):
         max_length=100,
         help_text="Whether the committee supports or opposes the proposition",
     )
-    proposition = models.ForeignKey('ScrapedProposition')
+    proposition = models.ForeignKey('Proposition')
 
     def __str__(self):
         return self.name

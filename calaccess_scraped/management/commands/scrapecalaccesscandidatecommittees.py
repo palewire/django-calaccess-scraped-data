@@ -7,8 +7,8 @@ import re
 from time import sleep
 from calaccess_scraped.management.commands import ScrapeCommand
 from calaccess_scraped.models import (
-    ScrapedCandidate,
-    ScrapedCandidateCommittee,
+    Candidate,
+    CandidateCommittee,
 )
 
 
@@ -22,7 +22,7 @@ class Command(ScrapeCommand):
         """
         Delete records form related database tables.
         """
-        ScrapedCandidateCommittee.objects.all().delete()
+        CandidateCommittee.objects.all().delete()
 
     def scrape(self):
         """
@@ -31,7 +31,7 @@ class Command(ScrapeCommand):
         self.header("Scraping candidate committees")
 
         # Set of unique scraped candidate ids
-        candidate_ids = set(ScrapedCandidate.objects.values_list(
+        candidate_ids = set(Candidate.objects.values_list(
             'scraped_id', flat=True))
 
         results = []
@@ -88,7 +88,7 @@ class Command(ScrapeCommand):
             for committee_data in result['committees']:
                 # Add the candidate id to the committee data
                 committee_data['candidate_id'] = result['candidate_id']
-                committee_obj, c = ScrapedCandidateCommittee.objects \
+                committee_obj, c = CandidateCommittee.objects \
                     .get_or_create(
                         **committee_data
                     )

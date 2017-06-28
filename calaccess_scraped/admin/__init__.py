@@ -5,18 +5,18 @@ Import all of the admins from submodules and thread them together.
 """
 from calaccess_raw.admin.base import BaseAdmin
 from .candidates import (
-    CandidateScrapedElectionAdmin,
-    ScrapedCandidateAdmin,
-    ScrapedCandidateCommitteeAdmin,
+    CandidateElectionAdmin,
+    CandidateAdmin,
+    CandidateCommitteeAdmin,
 )
 from .incumbents import (
-    IncumbentScrapedElectionAdmin,
-    ScrapedIncumbentAdmin,
+    IncumbentElectionAdmin,
+    IncumbentAdmin,
 )
 from .propositions import (
-    PropositionScrapedElectionAdmin,
-    ScrapedPropositionAdmin,
-    ScrapedPropositionCommitteeAdmin,
+    PropositionElectionAdmin,
+    PropositionAdmin,
+    PropositionCommitteeAdmin,
 )
 from .tracking import (
     ScrapedDataVersionAdmin,
@@ -25,12 +25,12 @@ from .tracking import (
 __all__ = (
     'BaseAdmin',
     'ScrapedDataVersionAdmin',
-    'CandidateScrapedElectionAdmin',
-    'ScrapedCandidateAdmin',
-    'ScrapedCandidateCommitteeAdmin',
-    'IncumbentScrapedElectionAdmin',
-    'ScrapedIncumbentAdmin',
-    'PropositionScrapedElectionAdmin',
-    'ScrapedPropositionAdmin',
-    'ScrapedPropositionCommitteeAdmin',
+    'CandidateElectionAdmin',
+    'CandidateAdmin',
+    'CandidateCommitteeAdmin',
+    'IncumbentElectionAdmin',
+    'IncumbentAdmin',
+    'PropositionElectionAdmin',
+    'PropositionAdmin',
+    'PropositionCommitteeAdmin',
 )

@@ -8,9 +8,9 @@ from time import sleep
 from six.moves.urllib.parse import urljoin
 from calaccess_scraped.management.commands import ScrapeCommand
 from calaccess_scraped.models import (
-    PropositionScrapedElection,
-    ScrapedProposition,
-    ScrapedPropositionCommittee
+    PropositionElection,
+    Proposition,
+    PropositionCommittee
 )
 
 
@@ -25,9 +25,9 @@ class Command(ScrapeCommand):
         """
         Delete records form related database tables.
         """
-        ScrapedPropositionCommittee.objects.all().delete()
-        ScrapedProposition.objects.all().delete()
-        PropositionScrapedElection.objects.all().delete()
+        PropositionCommittee.objects.all().delete()
+        Proposition.objects.all().delete()
+        PropositionElection.objects.all().delete()
 
     def scrape(self):
         """
@@ -161,7 +161,7 @@ class Command(ScrapeCommand):
             # For each election on that page
             for election_name, prop_list in d.items():
                 # Get or create election object
-                election_obj, c = PropositionScrapedElection.objects \
+                election_obj, c = PropositionElection.objects \
                     .get_or_create(
                         name=election_name.strip(),
                         url=url,
@@ -169,7 +169,7 @@ class Command(ScrapeCommand):
                 # Loop through propositions
                 for prop_data in prop_list:
                     # Get or create proposition object
-                    prop_obj, c = ScrapedProposition.objects.get_or_create(
+                    prop_obj, c = Proposition.objects.get_or_create(
                         name=prop_data['name'].strip(),
                         scraped_id=prop_data['id'],
                         url=prop_data['url'],
@@ -182,7 +182,7 @@ class Command(ScrapeCommand):
                     # Now loop through the committees
                     for committee in prop_data['committees']:
                         # Get or create it
-                        committee_obj, c = ScrapedPropositionCommittee \
+                        committee_obj, c = PropositionCommittee \
                             .objects.get_or_create(
                                 name=committee['name'].strip(),
                                 scraped_id=committee['id'],

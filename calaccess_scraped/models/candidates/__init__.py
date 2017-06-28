@@ -3,12 +3,12 @@
 """
 Models for storing candidate information scraped from the CAL-ACCESS website.
 """
-from .candidates import ScrapedCandidate
-from .elections import CandidateScrapedElection
-from .committees import ScrapedCandidateCommittee
+from .candidates import Candidate
+from .elections import CandidateElection
+from .committees import CandidateCommittee
 
 __all__ = (
-    'ScrapedCandidate',
-    'CandidateScrapedElection',
-    'ScrapedCandidateCommittee',
+    'Candidate',
+    'CandidateElection',
+    'CandidateCommittee',
 )

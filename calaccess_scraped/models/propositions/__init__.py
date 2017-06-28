@@ -3,13 +3,13 @@
 """
 Models for storing proposition information scraped from the CAL-ACCESS website.
 """
-from .propositions import ScrapedProposition
-from .elections import PropositionScrapedElection
-from .committees import ScrapedPropositionCommittee
+from .propositions import Proposition
+from .elections import PropositionElection
+from .committees import PropositionCommittee
 
 
 __all__ = (
-    'ScrapedProposition',
-    'PropositionScrapedElection',
-    'ScrapedPropositionCommittee',
+    'Proposition',
+    'PropositionElection',
+    'PropositionCommittee',
 )

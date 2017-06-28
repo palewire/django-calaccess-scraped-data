@@ -9,10 +9,10 @@ from calaccess_scraped import models
 from calaccess_raw.admin.base import BaseAdmin
 
 
-@admin.register(models.CandidateScrapedElection)
-class CandidateScrapedElectionAdmin(BaseAdmin):
+@admin.register(models.CandidateElection)
+class CandidateElectionAdmin(BaseAdmin):
     """
-    Custom admin for CandidateScrapedElectionAdmin model.
+    Custom admin for CandidateElectionAdmin model.
     """
     list_display = (
         "name",
@@ -23,10 +23,10 @@ class CandidateScrapedElectionAdmin(BaseAdmin):
     )
 
 
-@admin.register(models.ScrapedCandidate)
-class ScrapedCandidateAdmin(BaseAdmin):
+@admin.register(models.Candidate)
+class CandidateAdmin(BaseAdmin):
     """
-    Custom admin for ScrapedCandidateAdmin model.
+    Custom admin for CandidateAdmin model.
     """
     list_display = (
         "scraped_id",
@@ -45,10 +45,10 @@ class ScrapedCandidateAdmin(BaseAdmin):
     )
 
 
-@admin.register(models.ScrapedCandidateCommittee)
-class ScrapedCandidateCommitteeAdmin(BaseAdmin):
+@admin.register(models.CandidateCommittee)
+class CandidateCommitteeAdmin(BaseAdmin):
     """
-    Custom admin for ScrapedCandidateCommitteeAdmin model.
+    Custom admin for CandidateCommitteeAdmin model.
     """
     list_display = (
         "scraped_id",

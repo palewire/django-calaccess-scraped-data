@@ -11,18 +11,18 @@ from .base import (
     BaseScrapedCommittee,
 )
 from .candidates import (
-    ScrapedCandidate,
-    CandidateScrapedElection,
-    ScrapedCandidateCommittee,
+    Candidate,
+    CandidateElection,
+    CandidateCommittee,
 )
 from .incumbents import (
-    ScrapedIncumbent,
-    IncumbentScrapedElection,
+    Incumbent,
+    IncumbentElection,
 )
 from .propositions import (
-    ScrapedProposition,
-    PropositionScrapedElection,
-    ScrapedPropositionCommittee,
+    Proposition,
+    PropositionElection,
+    PropositionCommittee,
 )
 from .tracking import ScrapedDataVersion
 
@@ -32,13 +32,13 @@ __all__ = (
     'BaseScrapedModel',
     'BaseScrapedElection',
     'BaseScrapedCommittee',
-    'ScrapedProposition',
-    'PropositionScrapedElection',
-    'ScrapedPropositionCommittee',
-    'ScrapedCandidate',
-    'CandidateScrapedElection',
-    'ScrapedCandidateCommittee',
-    'ScrapedIncumbent',
-    'IncumbentScrapedElection',
+    'Proposition',
+    'PropositionElection',
+    'PropositionCommittee',
+    'Candidate',
+    'CandidateElection',
+    'CandidateCommittee',
+    'Incumbent',
+    'IncumbentElection',
     'ScrapedDataVersion',
 )

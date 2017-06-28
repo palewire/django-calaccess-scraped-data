@@ -8,8 +8,8 @@ from time import sleep
 from six.moves.urllib.parse import urljoin
 from calaccess_scraped.management.commands import ScrapeCommand
 from calaccess_scraped.models import (
-    ScrapedCandidate,
-    CandidateScrapedElection
+    Candidate,
+    CandidateElection
 )
 
 
@@ -24,8 +24,8 @@ class Command(ScrapeCommand):
         """
         Delete records form related database tables.
         """
-        ScrapedCandidate.objects.all().delete()
-        CandidateScrapedElection.objects.all().delete()
+        Candidate.objects.all().delete()
+        CandidateElection.objects.all().delete()
 
     def scrape(self):
         """
@@ -139,7 +139,7 @@ class Command(ScrapeCommand):
         for url, election_data in results.items():
 
             self.log('Processing %s' % election_data['name'])
-            election_obj, c = CandidateScrapedElection.objects.get_or_create(
+            election_obj, c = CandidateElection.objects.get_or_create(
                 name=election_data['name'].strip(),
                 scraped_id=election_data['scraped_id'],
                 sort_index=election_data['sort_index'],
@@ -156,7 +156,7 @@ class Command(ScrapeCommand):
                 for candidate_data in candidates:
 
                     # Create the candidate object
-                    candidate_obj, c = ScrapedCandidate.objects.get_or_create(
+                    candidate_obj, c = Candidate.objects.get_or_create(
                         name=candidate_data['name'].strip(),
                         scraped_id=candidate_data['scraped_id'],
                         office_name=office_name.strip(),

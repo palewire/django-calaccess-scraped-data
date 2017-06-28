@@ -10,7 +10,7 @@ from calaccess_scraped.models.base import BaseScrapedElection
 
 
 @python_2_unicode_compatible
-class CandidateScrapedElection(BaseScrapedElection):
+class CandidateElection(BaseScrapedElection):
     """
     An election day scraped as part of the `scrapecalaccesscandidates` command.
     """

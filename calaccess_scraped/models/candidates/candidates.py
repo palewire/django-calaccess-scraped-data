@@ -10,7 +10,7 @@ from calaccess_scraped.models.base import BaseScrapedModel
 
 
 @python_2_unicode_compatible
-class ScrapedCandidate(BaseScrapedModel):
+class Candidate(BaseScrapedModel):
     """
     A candidate for office scraped from the California Secretary of State's site.
     """
@@ -29,7 +29,7 @@ class ScrapedCandidate(BaseScrapedModel):
         blank=True
     )
     election = models.ForeignKey(
-        'CandidateScrapedElection',
+        'CandidateElection',
         related_name='candidates',
     )
 

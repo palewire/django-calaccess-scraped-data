@@ -9,8 +9,8 @@ from datetime import datetime
 from six.moves.urllib.parse import urljoin
 from calaccess_scraped.management.commands import ScrapeCommand
 from calaccess_scraped.models import (
-    ScrapedIncumbent,
-    IncumbentScrapedElection
+    Incumbent,
+    IncumbentElection
 )
 
 
@@ -28,8 +28,8 @@ class Command(ScrapeCommand):
         """
         Delete records form related database tables.
         """
-        ScrapedIncumbent.objects.all().delete()
-        IncumbentScrapedElection.objects.all().delete()
+        Incumbent.objects.all().delete()
+        IncumbentElection.objects.all().delete()
 
     def scrape(self):
         """
@@ -153,7 +153,7 @@ class Command(ScrapeCommand):
             # Loop through each election
             for election in data['elections']:
                 # Create the election object
-                election_obj, created = IncumbentScrapedElection.objects.get_or_create(
+                election_obj, created = IncumbentElection.objects.get_or_create(
                     session=data['session'],
                     url=url,
                     **election
@@ -164,7 +164,7 @@ class Command(ScrapeCommand):
             # Loop through each incumbent
             for incumbent in data['incumbents']:
                 # Create the incumbent object
-                incumbent_obj, created = ScrapedIncumbent.objects.get_or_create(
+                incumbent_obj, created = Incumbent.objects.get_or_create(
                     session=data['session'],
                     **incumbent
                 )

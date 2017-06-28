@@ -9,7 +9,7 @@ from calaccess_scraped.models.base import BaseScrapedElection
 
 
 @python_2_unicode_compatible
-class PropositionScrapedElection(BaseScrapedElection):
+class PropositionElection(BaseScrapedElection):
     """
     An election day scraped as part of the `scrapecalaccesspropositions` command.
     """

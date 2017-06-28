@@ -10,7 +10,7 @@ from calaccess_scraped.models.base import BaseScrapedCommittee
 
 
 @python_2_unicode_compatible
-class ScrapedCandidateCommittee(BaseScrapedCommittee):
+class CandidateCommittee(BaseScrapedCommittee):
     """
     A candidate committee scraped from the California Secretary of State's site.
     """

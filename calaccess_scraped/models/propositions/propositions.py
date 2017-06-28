@@ -10,7 +10,7 @@ from calaccess_scraped.models.base import BaseScrapedModel
 
 
 @python_2_unicode_compatible
-class ScrapedProposition(BaseScrapedModel):
+class Proposition(BaseScrapedModel):
     """
     A yes or no ballot measure for voters scraped from the California Secretary of State's site.
     """
@@ -26,7 +26,7 @@ class ScrapedProposition(BaseScrapedModel):
         max_length=200
     )
     election = models.ForeignKey(
-        'PropositionScrapedElection',
+        'PropositionElection',
         related_name='propositions',
     )
 
