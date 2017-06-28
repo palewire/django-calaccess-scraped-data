@@ -6,7 +6,7 @@ Scrape links between filers and propositions from the CAL-ACCESS site.
 import re
 from time import sleep
 from six.moves.urllib.parse import urljoin
-from calaccess_scraped.management.commands import ScrapeCommand
+from calaccess_scraped.management.commands import ScrapePageCommand
 from calaccess_scraped.models import (
     PropositionElection,
     Proposition,
@@ -14,7 +14,7 @@ from calaccess_scraped.models import (
 )
 
 
-class Command(ScrapeCommand):
+class Command(ScrapePageCommand):
     """
     Scrape links between filers and propositions from official CAL-ACCESS site.
     """

@@ -143,11 +143,6 @@ class ScrapeCommand(CalAccessCommand):
 
         os.path.exists(self.cache_dir) or os.mkdir(self.cache_dir)
 
-        if self.force_flush:
-            self.flush()
-        results = self.scrape()
-        self.save(results)
-
     def get_scraped_version(self):
         """
         Get or create the current processed version.
@@ -156,6 +151,24 @@ class ScrapeCommand(CalAccessCommand):
         created is a boolean specifying whether a version was created.
         """
         return ScrapedDataVersion.objects.create()
+
+
+class ScrapePageCommand(ScrapeCommand):
+    """
+    Base management command for scraping a page/subsection of the CAL-ACCESS website.
+    """
+    def handle(self, *args, **options):
+        """
+        Make it happen.
+        """
+        super(ScrapePageCommand, self).handle(*args, **options)
+
+        os.path.exists(self.cache_dir) or os.mkdir(self.cache_dir)
+
+        if self.force_flush:
+            self.flush()
+        results = self.scrape()
+        self.save(results)
 
     @retry(requests.exceptions.RequestException)
     def get_url(self, url, retries=1, request_type='GET'):

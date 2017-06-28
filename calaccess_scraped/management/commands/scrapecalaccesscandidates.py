@@ -6,14 +6,14 @@ Scrape list of certified candidates from the CAL-ACCESS site.
 import re
 from time import sleep
 from six.moves.urllib.parse import urljoin
-from calaccess_scraped.management.commands import ScrapeCommand
+from calaccess_scraped.management.commands import ScrapePageCommand
 from calaccess_scraped.models import (
     Candidate,
     CandidateElection
 )
 
 
-class Command(ScrapeCommand):
+class Command(ScrapePageCommand):
     """
     Scrape list of certified candidates for each election on CAL-ACCESS site.
     """

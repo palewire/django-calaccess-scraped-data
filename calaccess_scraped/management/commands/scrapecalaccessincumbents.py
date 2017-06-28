@@ -7,14 +7,14 @@ import re
 from time import sleep
 from datetime import datetime
 from six.moves.urllib.parse import urljoin
-from calaccess_scraped.management.commands import ScrapeCommand
+from calaccess_scraped.management.commands import ScrapePageCommand
 from calaccess_scraped.models import (
     Incumbent,
     IncumbentElection
 )
 
 
-class Command(ScrapeCommand):
+class Command(ScrapePageCommand):
     """
     Scrape list of incumbent state officials for each election on CAL-ACCESS site.
     """

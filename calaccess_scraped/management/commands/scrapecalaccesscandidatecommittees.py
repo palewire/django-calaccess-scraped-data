@@ -5,14 +5,14 @@ Scrape each certified candidate's committees from the CAL-ACCESS site.
 """
 import re
 from time import sleep
-from calaccess_scraped.management.commands import ScrapeCommand
+from calaccess_scraped.management.commands import ScrapePageCommand
 from calaccess_scraped.models import (
     Candidate,
     CandidateCommittee,
 )
 
 
-class Command(ScrapeCommand):
+class Command(ScrapePageCommand):
     """
     Scrape each candidate's committees from the CAL-ACCESS site.
     """
