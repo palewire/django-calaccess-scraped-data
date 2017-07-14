@@ -33,21 +33,20 @@ class TestCommand(Command):
 
 setup(
     name='django-calaccess-scraped-data',
-    version='0.0.0',
+    version='0.0.1',
     license='MIT',
     description='A Django app to scrape campaign finance data \
 from the California Secretary of State’s CAL-ACCESS database',
-    url='http://django-calaccess-scraped-data.californiacivicdata.org',
     author='California Civic Data Coalition',
+    url='http://django-calaccess.californiacivicdata.org',
     author_email='cacivicdata@gmail.com',
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,  # because we're including static files
     install_requires=(
-        'django-calaccess-raw-data>=1.4.7',
+        'django-calaccess-raw-data>=1.5.2',
         'django>=1.9',
-        'csvkit>=1.0',
-        'beautifulsoup4>=4.3.2',
+        'beautifulsoup4>=4.6.0',
     ),
     cmdclass={'test': TestCommand,}
 )
