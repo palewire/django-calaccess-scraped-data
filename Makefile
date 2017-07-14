@@ -1,4 +1,4 @@
-.PHONY: rs runserver shell sh test
+.PHONY: rs runserver shell sh ship test
 
 rs:
 	python example/manage.py runserver
@@ -11,6 +11,10 @@ shell:
 
 sh:
 	python example/manage.py shell
+
+ship:
+	python setup.py sdist bdist_wheel
+	twine upload dist/* --skip-existing
 
 test:
 	flake8 calaccess_scraped
