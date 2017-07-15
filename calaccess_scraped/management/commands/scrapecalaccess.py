@@ -11,38 +11,20 @@ class Command(ScrapeCommand):
     """
     Run all scraper commands.
     """
-    help = "Run all scraper commands."
+    help = "Run all scraper commands"
 
     def handle(self, *args, **options):
         """
         Make it happen.
         """
         super(Command, self).handle(*args, **options)
-
-        call_command(
-            'scrapecalaccesspropositions',
+        kwargs = dict(
             verbosity=self.verbosity,
             no_color=self.no_color,
             force_flush=self.force_flush,
             force_download=self.force_download,
             update_cache=self.update_cache,
         )
-
-        call_command(
-            'scrapecalaccesscandidates',
-            verbosity=self.verbosity,
-            no_color=self.no_color,
-            force_flush=self.force_flush,
-            force_download=self.force_download,
-            update_cache=self.update_cache,
-        )
-
-        call_command(
-            'scrapecalaccessincumbents',
-            verbosity=self.verbosity,
-            no_color=self.no_color,
-            force_flush=self.force_flush,
-            force_download=self.force_download,
-            update_cache=self.update_cache,
-        )
-        # Should we be running scrapecalaccesscandidatecommittees too?
+        call_command('scrapecalaccesspropositions', **kwargs)
+        call_command('scrapecalaccesscandidates', **kwargs)
+        call_command('scrapecalaccessincumbents', **kwargs)
