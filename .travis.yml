@@ -6,6 +6,7 @@ cache:
 python:
  - "2.7"
  - "3.5"
+ - "3.6"
 
 env:
  - DJANGO_VERSION=1.10
@@ -16,17 +17,9 @@ install:
  - pip uninstall -y Django
  - pip install -q Django==$DJANGO_VERSION
 
-before_script:
-  - cp example/project/settings_local.py.template example/settings_local.py
-  - psql -c 'create database calaccess_scraped;' -U postgres
-  - psql -c "CREATE EXTENSION postgis;" -U postgres -d calaccess_scraped
-
 script:
  - flake8 calaccess_scraped
  - coverage run example/manage.py test calaccess_scraped
 
 after_success:
  - coveralls
-
-addons:
-  postgresql: "9.4"
