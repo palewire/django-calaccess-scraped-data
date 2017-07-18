@@ -3,7 +3,7 @@
 """
 Import all of the admins from submodules and thread them together.
 """
-from calaccess_raw.admin.base import BaseAdmin
+from .base import BaseAdmin
 from .candidates import (
     CandidateElectionAdmin,
     CandidateAdmin,

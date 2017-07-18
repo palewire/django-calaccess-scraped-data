@@ -6,7 +6,7 @@ Custom administration panels for scraped proposition models.
 from __future__ import unicode_literals
 from django.contrib import admin
 from calaccess_scraped import models
-from calaccess_raw.admin.base import BaseAdmin
+from calaccess_scraped.admin.base import BaseAdmin
 
 
 @admin.register(models.PropositionElection)
