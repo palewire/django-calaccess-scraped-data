@@ -2,6 +2,7 @@
 Django>=1.10
 pytz
 beautifulsoup4
+requests
 
 # Databases
 mysqlclient
