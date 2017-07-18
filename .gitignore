@@ -25,3 +25,4 @@ example/test-data/csv/
 example/test-data/log/
 example/test-data/processed/
 clean.zip
+.python-version
