@@ -1,7 +1,7 @@
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'calaccess_raw',
+        'NAME': 'calaccess_scraped',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',
