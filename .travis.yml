@@ -9,13 +9,20 @@ python:
  - "3.6"
 
 env:
- - DJANGO_VERSION=1.10
- - DJANGO_VERSION=1.11
+ - DJANGO_VERSION=1.10.* DATABASE_SETTINGS='settings_mysql.py'
+ - DJANGO_VERSION=1.10.* DATABASE_SETTINGS='settings_postgresql.py'
+ - DJANGO_VERSION=1.11.* DATABASE_SETTINGS='settings_mysql.py'
+ - DJANGO_VERSION=1.11.* DATABASE_SETTINGS='settings_postgresql.py'
 
 install:
  - pip install -r requirements.txt
  - pip uninstall -y Django
  - pip install -q Django==$DJANGO_VERSION
+
+before_script:
+  - mysql -e 'create database calaccess_scraped;'
+  - psql -c 'create database calaccess_scraped;' -U postgres
+  - cp example/project/$DATABASE_SETTINGS.template example/project/settings_local.py
 
 script:
  - flake8 calaccess_scraped

@@ -4,7 +4,8 @@ pytz
 beautifulsoup4
 
 # Databases
-psycopg2>=2.7.1
+mysqlclient
+psycopg2
 
 # Testing
 flake8
