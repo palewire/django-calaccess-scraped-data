@@ -98,4 +98,3 @@ class Command(ScrapePageCommand):
                 else:
                     committee_obj.last_modified = now()
                     committee_obj.save()
-
