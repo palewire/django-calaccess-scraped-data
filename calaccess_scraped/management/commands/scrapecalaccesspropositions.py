@@ -157,6 +157,7 @@ class Command(ScrapePageCommand):
         """
         Save results of scrape to related database tables.
         """
+        self.log('Processing %s election cycles.' % len(results))
         # For each year page
         for url, d in results.items():
             # For each election on that page
