@@ -7,6 +7,7 @@ import re
 from time import sleep
 from datetime import datetime
 from six.moves.urllib.parse import urljoin
+from django.utils.timezone import now
 from calaccess_scraped.management.commands import ScrapePageCommand
 from calaccess_scraped.models import (
     Incumbent,
@@ -160,6 +161,9 @@ class Command(ScrapePageCommand):
                 )
                 if created and self.verbosity > 2:
                     self.log('Created %s' % election_obj)
+                else:
+                    election_obj.last_modified = now()
+                    election_obj.save()
 
             # Loop through each incumbent
             for incumbent in data['incumbents']:
@@ -170,3 +174,6 @@ class Command(ScrapePageCommand):
                 )
                 if created and self.verbosity > 2:
                     self.log('Created %s' % incumbent_obj)
+                else:
+                    incumbent_obj.last_modified = now()
+                    incumbent_obj.save()

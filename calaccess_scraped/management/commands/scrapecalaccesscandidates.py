@@ -6,6 +6,7 @@ Scrape list of certified candidates from the CAL-ACCESS site.
 import re
 from time import sleep
 from six.moves.urllib.parse import urljoin
+from django.utils.timezone import now
 from calaccess_scraped.management.commands import ScrapePageCommand
 from calaccess_scraped.models import (
     Candidate,
@@ -148,6 +149,9 @@ class Command(ScrapePageCommand):
 
             if c and self.verbosity > 2:
                 self.log('Created %s' % election_obj)
+            else:
+                election_obj.last_modified = now()
+                election_obj.save()
 
             # Loop through each of the races
             for office_name, candidates in election_data['races'].items():
@@ -166,3 +170,6 @@ class Command(ScrapePageCommand):
 
                     if c and self.verbosity > 2:
                         self.log('Created %s' % candidate_obj)
+                    else:
+                        candidate_obj.last_modified = now()
+                        candidate_obj.save()

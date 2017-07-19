@@ -5,6 +5,7 @@ Scrape each certified candidate's committees from the CAL-ACCESS site.
 """
 import re
 from time import sleep
+from django.utils.timezone import now
 from calaccess_scraped.management.commands import ScrapePageCommand
 from calaccess_scraped.models import (
     Candidate,
@@ -94,3 +95,7 @@ class Command(ScrapePageCommand):
                     )
                 if c and self.verbosity > 2:
                     self.log('Created %s' % committee_obj)
+                else:
+                    committee_obj.last_modified = now()
+                    committee_obj.save()
+

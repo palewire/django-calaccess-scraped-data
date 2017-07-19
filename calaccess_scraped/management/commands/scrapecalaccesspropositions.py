@@ -6,6 +6,7 @@ Scrape links between filers and propositions from the CAL-ACCESS site.
 import re
 from time import sleep
 from six.moves.urllib.parse import urljoin
+from django.utils.timezone import now
 from calaccess_scraped.management.commands import ScrapePageCommand
 from calaccess_scraped.models import (
     PropositionElection,
@@ -166,6 +167,10 @@ class Command(ScrapePageCommand):
                         name=election_name.strip(),
                         url=url,
                     )
+                if not c:
+                    election_obj.last_modified = now()
+                    election_obj.save()
+
                 # Loop through propositions
                 for prop_data in prop_list:
                     # Get or create proposition object
@@ -178,6 +183,9 @@ class Command(ScrapePageCommand):
                     # Log it
                     if c and self.verbosity > 2:
                         self.log('Created %s' % prop_obj)
+                    else:
+                        prop_obj.last_modified = now()
+                        prop_obj.save()
 
                     # Now loop through the committees
                     for committee in prop_data['committees']:
@@ -194,3 +202,6 @@ class Command(ScrapePageCommand):
                         # Log it
                         if c and self.verbosity > 2:
                             self.log('Created %s' % committee_obj)
+                        else:
+                            committee_obj.last_modified = now()
+                            committee_obj.save()
