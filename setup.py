@@ -33,7 +33,7 @@ class TestCommand(Command):
 
 setup(
     name='django-calaccess-scraped-data',
-    version='0.0.1',
+    version='0.1.0',
     license='MIT',
     description='A Django app to scrape campaign finance data \
 from the California Secretary of State’s CAL-ACCESS database',
