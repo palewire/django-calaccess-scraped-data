@@ -44,8 +44,8 @@ from the California Secretary of State’s CAL-ACCESS database',
     include_package_data=True,
     zip_safe=False,  # because we're including static files
     install_requires=(
-        'django-calaccess-raw-data>=1.5.2',
-        'django>=1.9',
+        'django-calaccess-raw-data>=1.6.2',
+        'django>=1.10',
         'beautifulsoup4>=4.6.0',
     ),
     cmdclass={'test': TestCommand,}
