@@ -176,8 +176,7 @@ class ScrapePageCommand(ScrapeCommand):
         Returns the response from a URL, retries if it fails.
         """
         headers = {
-            'User-Agent': 'California Civic Data Coalition \
-            (cacivicdata@gmail.com)',
+            'User-Agent': 'California Civic Data Coalition (cacivicdata@gmail.com)',
         }
         if self.verbosity > 2:
             self.log(" Making a {} request for {}".format(request_type, url))
