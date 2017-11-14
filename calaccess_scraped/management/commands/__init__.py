@@ -180,7 +180,7 @@ class ScrapePageCommand(ScrapeCommand):
         }
         if self.verbosity > 2:
             self.log(" Making a {} request for {}".format(request_type, url))
-        return getattr(requests, request_type.lower())(url, headers=headers)
+        return getattr(requests, request_type.lower())(url, headers=headers, timeout=5)
 
     def get_headers(self, url):
         """
