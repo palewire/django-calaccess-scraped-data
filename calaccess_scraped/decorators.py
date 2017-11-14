@@ -24,12 +24,12 @@ def retry(ExceptionToCheck, tries=3, delay=4, backoff=3):
                     try_one_last_time = False
                     break
                 except ExceptionToCheck:
-                    logger.debug("Error. Retrying in %s" % mdelay)
+                    logger.debug("Error. Retrying in %s seconds" % mdelay)
                     time.sleep(mdelay)
                     mtries -= 1
                     mdelay *= backoff
             if try_one_last_time:
-                logger.debug("Error. Final try in %s" % mdelay)
+                logger.debug("Error. Final try in %s seconds" % mdelay)
                 return f(*args, **kwargs)
             return
         return f_retry  # true decorator
