@@ -35,8 +35,8 @@ setup(
     name='django-calaccess-scraped-data',
     version='0.1.2',
     license='MIT',
-    description='A Django app to scrape campaign finance data \
-from the California Secretary of State’s CAL-ACCESS website',
+    description='A Django app to scrape campaign-finance data from '
+                'the California Secretary of State’s CAL-ACCESS website',
     author='California Civic Data Coalition',
     url='http://django-calaccess.californiacivicdata.org',
     author_email='cacivicdata@gmail.com',
@@ -46,7 +46,7 @@ from the California Secretary of State’s CAL-ACCESS website',
     install_requires=(
         'django-calaccess-raw-data>=1.7.0',
         'django>=1.11',
-        'beautifulsoup4>=4.6.0',
+        'beautifulsoup4>=4.6.0'
     ),
     cmdclass={'test': TestCommand,}
 )
