@@ -31,6 +31,7 @@ class Candidate(BaseScrapedModel):
     election = models.ForeignKey(
         'CandidateElection',
         related_name='candidates',
+        on_delete=models.CASCADE
     )
 
     def __str__(self):
