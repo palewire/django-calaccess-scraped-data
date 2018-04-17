@@ -18,7 +18,7 @@ class PropositionCommittee(BaseScrapedCommittee):
         max_length=100,
         help_text="Whether the committee supports or opposes the proposition",
     )
-    proposition = models.ForeignKey('Proposition')
+    proposition = models.ForeignKey('Proposition', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name

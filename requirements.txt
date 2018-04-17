@@ -1,5 +1,5 @@
 # The app
-Django>=1.10
+Django==1.11.*
 pytz
 beautifulsoup4
 requests

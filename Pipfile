@@ -1,0 +1,22 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+Django = "==1.11"
+pytz = "*"
+"beautifulsoup4" = "*"
+requests = "*"
+mysqlclient = "*"
+"psycopg2" = "*"
+"flake8" = "*"
+"flake8-docstrings" = "*"
+coverage = "*"
+python-coveralls = "*"
+twine = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.6"

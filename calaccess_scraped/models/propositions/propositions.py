@@ -28,6 +28,7 @@ class Proposition(BaseScrapedModel):
     election = models.ForeignKey(
         'PropositionElection',
         related_name='propositions',
+        on_delete=models.CASCADE
     )
 
     class Meta:

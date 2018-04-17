@@ -9,10 +9,17 @@ python:
  - "3.6"
 
 env:
- - DJANGO_VERSION=1.10.* DATABASE_SETTINGS='settings_mysql.py'
- - DJANGO_VERSION=1.10.* DATABASE_SETTINGS='settings_postgresql.py'
  - DJANGO_VERSION=1.11.* DATABASE_SETTINGS='settings_mysql.py'
  - DJANGO_VERSION=1.11.* DATABASE_SETTINGS='settings_postgresql.py'
+ - DJANGO_VERSION=2.0.* DATABASE_SETTINGS='settings_mysql.py'
+ - DJANGO_VERSION=2.0.* DATABASE_SETTINGS='settings_postgresql.py'
+
+matrix:
+  exclude:
+  - python: "2.7"
+    env: DJANGO_VERSION=2.0.* DATABASE_SETTINGS='settings_mysql.py'
+  - python: "2.7"
+    env: DJANGO_VERSION=2.0.* DATABASE_SETTINGS='settings_postgresql.py'
 
 install:
  - pip install -r requirements.txt
