@@ -38,7 +38,7 @@ class Command(ScrapePageCommand):
 
         # Build the link list from the 2013 page because otherwise the
         # other years are hidden under the "Historical" link.
-        soup = self.get_html('Campaign/Measures/list.aspx?session=2013')
+        soup = self.get_html('Campaign/Measures/list.aspx?session=2015')
 
         # Filter links for uniqueness.
         links = soup.findAll('a', href=re.compile(r'^.*\?session=\d+'))

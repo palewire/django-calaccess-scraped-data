@@ -7,15 +7,16 @@ import os
 import re
 import logging
 import requests
+from itertools import cycle
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.utils import timezone
 from six.moves.urllib.parse import urljoin
 from django.utils.termcolors import colorize
+from calaccess_scraped.decorators import retry
 from six.moves.urllib.request import url2pathname
 from django.core.management.base import BaseCommand
 from calaccess_scraped.models.tracking import ScrapedDataVersion
-from calaccess_scraped.decorators import retry
 logger = logging.getLogger(__name__)
 
 
@@ -163,24 +164,112 @@ class ScrapePageCommand(ScrapeCommand):
         """
         super(ScrapePageCommand, self).handle(*args, **options)
 
+        # Verify cache directory exists
         os.path.exists(self.cache_dir) or os.mkdir(self.cache_dir)
 
+        # Flush if requested
         if self.force_flush:
             self.flush()
+
+        # Fetch a list of proxy addresses and user agents
+        self.proxy_pool = cycle(self.get_proxies())
+        self.useragent_pool = cycle(self.get_useragents())
+
+        # Scrape the data
         results = self.scrape()
+
+        # Save the results
         self.save(results)
 
-    @retry(requests.exceptions.RequestException)
+    def get_useragents(self):
+        """
+        Return a list of user agents.
+        """
+        return [
+             # Chrome
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 5.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
+            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
+            # Firefox
+            'Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1)',
+            'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko',
+            'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)',
+            'Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko',
+            'Mozilla/5.0 (Windows NT 6.2; WOW64; Trident/7.0; rv:11.0) like Gecko',
+            'Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko',
+            'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.0; Trident/5.0)',
+            'Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko',
+            'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)',
+            'Mozilla/5.0 (Windows NT 6.1; Win64; x64; Trident/7.0; rv:11.0) like Gecko',
+            'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)',
+            'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)',
+            'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)'
+        ]
+
+    def get_proxies(self):
+        """
+        Fetch a list of proxy addresses from the web.
+        """
+        # Fetch the page with the list
+        r = requests.get('https://free-proxy-list.net/')
+
+        # Set it up in BeautifulSoup for parsing
+        soup = BeautifulSoup(r.text, "html.parser")
+
+        # Initialize a blank list to use later
+        proxies = set()
+
+        # Loop through all the rows in the table we want to scrape
+        for row in soup.find("tbody").find_all('tr')[:25]:
+
+            # If it is listed as a working proxy ...
+            if 'yes' in str(row):
+                # ... parse out the IP
+                cell_list = row.find_all("td")
+                ip = cell_list[0].string
+                port = cell_list[1].string
+
+                # Add it to our list
+                proxies.add("{}:{}".format(ip, port))
+
+        # Return the list
+        return proxies
+
+    @retry((requests.exceptions.RequestException, requests.exceptions.ReadTimeout))
     def get_url(self, url, retries=1, request_type='GET'):
         """
         Returns the response from a URL, retries if it fails.
         """
+        # Set the headers
         headers = {
-            'User-Agent': 'California Civic Data Coalition (cacivicdata@gmail.com)',
+            'User-Agent': 'Googlebot/2.1', # 'California Civic Data Coalition (cacivicdata@gmail.com)',
         }
+
+        # Set the proxy
+        proxy = next(self.proxy_pool)
+        proxies = {
+            "http": proxy,
+            "https": proxy
+        }
+
+        # Log, if that's what we want to do
         if self.verbosity > 2:
-            self.log(" Making a {} request for {}".format(request_type, url))
-        return getattr(requests, request_type.lower())(url, headers=headers, timeout=5)
+            self.log(" Making a {} request for {} with proxy {}".format(request_type, url, proxy))
+
+        # Make the request and return the result
+        return getattr(requests, request_type.lower())(
+            url,
+            headers=headers,
+            proxies=proxies,
+            timeout=5
+        )
 
     def get_headers(self, url):
         """
