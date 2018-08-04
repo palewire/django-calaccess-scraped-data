@@ -22,13 +22,7 @@ class Command(ScrapePageCommand):
     help = "Scrape links between filers and propositions from the official \
     CAL-ACCESS site."
 
-    def flush(self):
-        """
-        Delete records form related database tables.
-        """
-        PropositionCommittee.objects.all().delete()
-        Proposition.objects.all().delete()
-        PropositionElection.objects.all().delete()
+
 
     def scrape(self):
         """
