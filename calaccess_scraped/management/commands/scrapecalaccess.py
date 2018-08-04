@@ -6,32 +6,77 @@ Run all scraper commands.
 import os
 import json
 import collections
+from django.conf import settings
 from calaccess_scraped import models
 from django.utils.timezone import now
 from scrapy.crawler import CrawlerProcess
 from django.core.management import call_command
 from scrapy.utils.project import get_project_settings
-from calaccess_scraped.management.commands import ScrapeCommand
+from calaccess_scraped.management.commands import CalAccessCommand
 
 
-class Command(ScrapeCommand):
+class Command(CalAccessCommand):
     """
     Run all scraper commands.
     """
     help = "Run all scraper commands"
+    cache_dir = os.path.join(
+        settings.BASE_DIR,
+        ".scraper_cache"
+    )
+
+    def add_arguments(self, parser):
+        """
+        Adds custom arguments specific to this command.
+        """
+        parser.add_argument(
+            '--flush',
+            action='store_true',
+            dest='force_flush',
+            default=False,
+            help='Flush database tables',
+        )
+        parser.add_argument(
+            '--cache-only',
+            action='store_false',
+            dest='update_cache',
+            default=True,
+            help="Skip the scraper's update checks. Use only cached files.",
+        )
 
     def handle(self, *args, **options):
         """
         Make it happen.
         """
-        super(ScrapeCommand, self).handle(*args, **options)
-        #self.scrape()
+        super(Command, self).handle(*args, **options)
+
+        self.force_flush = options.get("force_flush")
+        self.update_cache = options.get("update_cache")
+
+        os.path.exists(self.cache_dir) or os.mkdir(self.cache_dir)
+
+        if self.force_flush:
+            self.flush()
+
+        if self.update_cache:
+            self.scrape()
+
         self.load()
+
+    def get_scraped_version(self):
+        """
+        Get or create the current processed version.
+
+        Return a tuple (ProcessedDataVersion object, created), where
+        created is a boolean specifying whether a version was created.
+        """
+        return ScrapedDataVersion.objects.create()
 
     def flush(self):
         """
         Delete records form related database tables.
         """
+        self.log("Flushing database")
         models.PropositionCommittee.objects.all().delete()
         models.Proposition.objects.all().delete()
         models.PropositionElection.objects.all().delete()
@@ -44,12 +89,21 @@ class Command(ScrapeCommand):
         os.environ['SCRAPY_SETTINGS_MODULE'] = 'calaccess_crawler.settings'
         os.environ['SCRAPY_ITEMS_PATH'] = os.path.join(self.cache_dir, 'scraped.json')
         process = CrawlerProcess(get_project_settings())
-        process.crawl('incumbents')
+        #process.crawl('incumbents')
         process.crawl('propositions')
-        process.crawl('candidates')
+        #process.crawl('candidates')
         process.start()
 
+    def save(self, model, **kwargs):
+        obj, created = model.objects.get_or_create(**kwargs)
+        if created and self.verbosity > 2:
+            self.log('Created {}'.format(obj))
+        if not created:
+            obj.last_modified = now()
+            obj.save()
+
     def load(self):
+        # Read in the scraped data from JSON and regroup it by model.
         scraped_path = os.path.join(self.cache_dir, 'scraped.json')
         grouped_dict = collections.defaultdict(list)
         with open(scraped_path, 'r') as f:
@@ -60,51 +114,25 @@ class Command(ScrapeCommand):
                 except ValueError:
                     print(row)
 
-        #
-        # Propositions
-        #
-
+        # Load the models one by one.
         for d in grouped_dict['PropositionElection']:
-            election_obj, c = models.PropositionElection.objects.get_or_create(
+            self.save(models.PropositionElection, name=d['name'], url=d['url'])
+
+        for d in grouped_dict['Proposition']:
+            self.save(
+                models.Proposition,
                 name=d['name'],
+                scraped_id=d['id'],
                 url=d['url'],
+                election=models.PropositionElection.objects.get(name=d['election_name'])
             )
-            if c and self.verbosity > 2:
-                self.log('Created %s' % election_obj)
-            if not c:
-                election_obj.last_modified = now()
-                election_obj.save()
-        #
-        # # Loop through propositions
-        # for prop_data in prop_list:
-        #     # Get or create proposition object
-        #     prop_obj, c = Proposition.objects.get_or_create(
-        #         name=prop_data['name'].strip(),
-        #         scraped_id=prop_data['id'],
-        #         url=prop_data['url'],
-        #         election=election_obj
-        #     )
-        #     # Log it
-        #     if c and self.verbosity > 2:
-        #         self.log('Created %s' % prop_obj)
-        #     else:
-        #         prop_obj.last_modified = now()
-        #         prop_obj.save()
-        #
-        # # Now loop through the committees
-        # for committee in committee_list:
-        #     # Get or create it
-        #     committee_obj, c = PropositionCommittee.objects.get_or_create(
-        #             name=committee['name'],
-        #             scraped_id=committee['id'],
-        #             position=committee['position'],
-        #             url=committee['url'],
-        #             proposition=prop_obj,
-        #         )
-        #
-        #     # Log it
-        #     if c and self.verbosity > 2:
-        #         self.log('Created %s' % committee_obj)
-        #     else:
-        #         committee_obj.last_modified = now()
-        #         committee_obj.save()
+
+        for d in grouped_dict['PropositionCommittee']:
+            self.save(
+                models.PropositionCommittee,
+                name=d['name'],
+                scraped_id=d['id'],
+                position=d['position'],
+                url=d['url'],
+                proposition=models.Proposition.objects.get(name=d['proposition_name'])
+            )
