@@ -3,6 +3,7 @@ Django==1.11.*
 pytz
 beautifulsoup4
 requests
+-e git://github.com/california-civic-data-coalition/scrapy-calaccess-crawler.git#egg=calaccess_crawler
 
 # Databases
 mysqlclient
