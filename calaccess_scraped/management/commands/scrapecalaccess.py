@@ -99,12 +99,12 @@ class Command(CalAccessCommand):
         """
         Returns a DictReader with all the scraped records for the provided model.
         """
-        file_name = "{}Item.csv".format(model.klass_name)
+        file_name = "{}Item.csv".format(model().klass_name)
         file_path = os.path.join(self.cache_dir, file_name)
         file_obj = open(file_path, 'r')
         file_reader = list(csv.DictReader(file_obj))
         if self.verbosity:
-            self.log("Syncing {} {} scraped items".format(len(file_reader), model.klass_name))
+            self.log("Syncing {} {} scraped items".format(len(file_reader), model().klass_name))
         return file_reader
 
     def save_row(self, model, **row):
@@ -124,10 +124,10 @@ class Command(CalAccessCommand):
         """
         # Load the models one by one.
         for d in self.open_csv(models.PropositionElection):
-            self.save(models.PropositionElection, name=d['name'], url=d['url'])
+            self.save_row(models.PropositionElection, name=d['name'], url=d['url'])
 
         for d in self.open_csv(models.Proposition):
-            self.save(
+            self.save_row(
                 models.Proposition,
                 name=d['name'],
                 scraped_id=d['id'],
@@ -136,7 +136,7 @@ class Command(CalAccessCommand):
             )
 
         for d in self.open_csv(models.PropositionCommittee):
-            self.save(
+            self.save_row(
                 models.PropositionCommittee,
                 name=d['name'],
                 scraped_id=d['id'],
@@ -146,7 +146,7 @@ class Command(CalAccessCommand):
             )
 
         for d in self.open_csv(models.IncumbentElection):
-            self.save(
+            self.save_row(
                 models.IncumbentElection,
                 session=d['session'],
                 name=d['name'],
@@ -155,7 +155,7 @@ class Command(CalAccessCommand):
             )
 
         for d in self.open_csv(models.Incumbent):
-            self.save(
+            self.save_row(
                 models.Incumbent,
                 session=d['session'],
                 category=d['category'],
