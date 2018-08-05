@@ -3,20 +3,11 @@
 """
 Base classes for custom management commands.
 """
-import os
 import re
 import logging
-import requests
-from itertools import cycle
-from bs4 import BeautifulSoup
-from django.conf import settings
 from django.utils import timezone
-from six.moves.urllib.parse import urljoin
 from django.utils.termcolors import colorize
-from calaccess_scraped.decorators import retry
-from six.moves.urllib.request import url2pathname
 from django.core.management.base import BaseCommand
-from calaccess_scraped.models.tracking import ScrapedDataVersion
 logger = logging.getLogger(__name__)
 
 

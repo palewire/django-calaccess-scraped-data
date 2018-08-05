@@ -9,7 +9,6 @@ from django.conf import settings
 from calaccess_scraped import models
 from django.utils.timezone import now
 from scrapy.crawler import CrawlerProcess
-from django.core.management import call_command
 from scrapy.utils.project import get_project_settings
 from calaccess_scraped.management.commands import CalAccessCommand
 
@@ -170,7 +169,6 @@ class Command(CalAccessCommand):
                 models.CandidateElection,
                 name=d['name'],
                 scraped_id=d['id'],
-                # sort_index=election_data['sort_index'],
                 url=d['url'],
             )
 
