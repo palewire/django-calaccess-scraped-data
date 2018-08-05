@@ -46,7 +46,8 @@ setup(
     install_requires=(
         'django-calaccess-raw-data>=1.7.0',
         'django>=1.11',
-        'beautifulsoup4>=4.6.0'
+        'beautifulsoup4>=4.6.0',
+        'scrapy-calaccess-crawler>=0.0.1'
     ),
     cmdclass={'test': TestCommand,}
 )
