@@ -4,8 +4,7 @@
 Run all scraper commands.
 """
 import os
-import json
-import collections
+import csv
 from django.conf import settings
 from calaccess_scraped import models
 from django.utils.timezone import now
@@ -61,16 +60,7 @@ class Command(CalAccessCommand):
         if self.update_cache:
             self.scrape()
 
-        self.load()
-
-    def get_scraped_version(self):
-        """
-        Get or create the current processed version.
-
-        Return a tuple (ProcessedDataVersion object, created), where
-        created is a boolean specifying whether a version was created.
-        """
-        return ScrapedDataVersion.objects.create()
+        self.sync()
 
     def flush(self):
         """
@@ -86,39 +76,47 @@ class Command(CalAccessCommand):
         models.IncumbentElection.objects.all().delete()
 
     def scrape(self):
+        """
+        Use Scrapy to crawl the CAL-ACCESS website and harvest data.
+        """
         os.environ['SCRAPY_SETTINGS_MODULE'] = 'calaccess_crawler.settings'
-        os.environ['SCRAPY_ITEMS_PATH'] = os.path.join(self.cache_dir, 'scraped.json')
+        os.environ['SCRAPY_EXPORT_DIR'] = self.cache_dir
         process = CrawlerProcess(get_project_settings())
-        #process.crawl('incumbents')
+        process.crawl('incumbents')
         process.crawl('propositions')
-        #process.crawl('candidates')
+        process.crawl('candidates')
         process.start()
 
-    def save(self, model, **kwargs):
-        obj, created = model.objects.get_or_create(**kwargs)
+    def open_csv(self, model):
+        """
+        Returns a DictReader with all the scraped records for the provided model.
+        """
+        file_name = "{}Item.csv".format(model.klass_name)
+        file_path = os.path.join(self.cache_dir, file_name)
+        reader = list(csv.DictReader(open(file_path, 'r')))
+        if self.verbosity:
+            self.log("Syncing {} {} scraped items".format(len(reader), model.klass_name))
+
+    def save_row(self, model, **row):
+        """
+        Syncs a CSV row of data to the provided model.
+        """
+        obj, created = model.objects.get_or_create(**row)
         if created and self.verbosity > 2:
-            self.log('Created {}'.format(obj))
+            self.log('Created {}: {}'.format(obj.klass_name, obj))
         if not created:
             obj.last_modified = now()
             obj.save()
 
-    def load(self):
-        # Read in the scraped data from JSON and regroup it by model.
-        scraped_path = os.path.join(self.cache_dir, 'scraped.json')
-        grouped_dict = collections.defaultdict(list)
-        with open(scraped_path, 'r') as f:
-            for row in f.readlines():
-                try:
-                    d = json.loads(row)
-                    grouped_dict[d['type']].append(d)
-                except ValueError:
-                    print(row)
-
+    def sync(self):
+        """
+        Syncs the scraped data with the database, model by model and row by row.
+        """
         # Load the models one by one.
-        for d in grouped_dict['PropositionElection']:
+        for d in self.open_csv(models.PropositionElection):
             self.save(models.PropositionElection, name=d['name'], url=d['url'])
 
-        for d in grouped_dict['Proposition']:
+        for d in self.open_csv(models.Proposition):
             self.save(
                 models.Proposition,
                 name=d['name'],
@@ -127,7 +125,7 @@ class Command(CalAccessCommand):
                 election=models.PropositionElection.objects.get(name=d['election_name'])
             )
 
-        for d in grouped_dict['PropositionCommittee']:
+        for d in self.open_csv(models.PropositionCommittee):
             self.save(
                 models.PropositionCommittee,
                 name=d['name'],
@@ -135,4 +133,24 @@ class Command(CalAccessCommand):
                 position=d['position'],
                 url=d['url'],
                 proposition=models.Proposition.objects.get(name=d['proposition_name'])
+            )
+
+        for d in self.open_csv(models.IncumbentElection):
+            self.save(
+                models.IncumbentElection,
+                session=d['session'],
+                name=d['name'],
+                date=d['date'],
+                url=d['url'],
+            )
+
+        for d in self.open_csv(models.Incumbent):
+            self.save(
+                models.Incumbent,
+                session=d['session'],
+                category=d['category'],
+                office_name=d['office'],
+                name=d['name'],
+                url=d['url'],
+                scraped_id=d['id']
             )
