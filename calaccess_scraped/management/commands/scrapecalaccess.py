@@ -49,17 +49,22 @@ class Command(CalAccessCommand):
         """
         super(Command, self).handle(*args, **options)
 
+        # Parse the arguments
         self.force_flush = options.get("force_flush")
         self.update_cache = options.get("update_cache")
 
+        # Verify the cache_dir exists
         os.path.exists(self.cache_dir) or os.mkdir(self.cache_dir)
 
+        # Flush, if asked for.
         if self.force_flush:
             self.flush()
 
+        # Scrape, unless asked not to.
         if self.update_cache:
             self.scrape()
 
+        # Sync the scrape with the database.
         self.sync()
 
     def flush(self):
@@ -79,9 +84,12 @@ class Command(CalAccessCommand):
         """
         Use Scrapy to crawl the CAL-ACCESS website and harvest data.
         """
+        # Configure Scrapy
         os.environ['SCRAPY_SETTINGS_MODULE'] = 'calaccess_crawler.settings'
         os.environ['SCRAPY_EXPORT_DIR'] = self.cache_dir
         process = CrawlerProcess(get_project_settings())
+
+        # Run the scrape
         process.crawl('incumbents')
         process.crawl('propositions')
         process.crawl('candidates')
@@ -93,9 +101,11 @@ class Command(CalAccessCommand):
         """
         file_name = "{}Item.csv".format(model.klass_name)
         file_path = os.path.join(self.cache_dir, file_name)
-        reader = list(csv.DictReader(open(file_path, 'r')))
+        file_obj = open(file_path, 'r')
+        file_reader = list(csv.DictReader(file_obj))
         if self.verbosity:
-            self.log("Syncing {} {} scraped items".format(len(reader), model.klass_name))
+            self.log("Syncing {} {} scraped items".format(len(file_reader), model.klass_name))
+        return file_reader
 
     def save_row(self, model, **row):
         """
