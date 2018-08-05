@@ -164,3 +164,22 @@ class Command(CalAccessCommand):
                 url=d['url'],
                 scraped_id=d['id']
             )
+
+        for d in self.open_csv(models.CandidateElection):
+            self.save_row(
+                models.CandidateElection,
+                name=d['name'],
+                scraped_id=d['id'],
+                # sort_index=election_data['sort_index'],
+                url=d['url'],
+            )
+
+        for d in self.open_csv(models.Candidate):
+            self.save_row(
+                models.Candidate,
+                name=d['name'],
+                scraped_id=d['id'],
+                office_name=d['office'],
+                url=d['url'],
+                election=models.CandidateElection.objects.get(scraped_id=d['election_id']),
+            )
