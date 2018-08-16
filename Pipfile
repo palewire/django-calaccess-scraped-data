@@ -15,6 +15,7 @@ mysqlclient = "*"
 coverage = "*"
 python-coveralls = "*"
 twine = "*"
+incapsula = "*"
 
 [dev-packages]
 

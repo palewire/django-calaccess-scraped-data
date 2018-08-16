@@ -173,45 +173,12 @@ class ScrapePageCommand(ScrapeCommand):
 
         # Fetch a list of proxy addresses and user agents
         self.proxy_pool = cycle(self.get_proxies())
-        self.useragent_pool = cycle(self.get_useragents())
 
         # Scrape the data
         results = self.scrape()
 
         # Save the results
         self.save(results)
-
-    def get_useragents(self):
-        """
-        Return a list of user agents.
-        """
-        return [
-             # Chrome
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-            'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
-            'Mozilla/5.0 (Windows NT 5.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
-            'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
-            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36',
-            'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
-            'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36',
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
-            'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
-            # Firefox
-            'Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1)',
-            'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko',
-            'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)',
-            'Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko',
-            'Mozilla/5.0 (Windows NT 6.2; WOW64; Trident/7.0; rv:11.0) like Gecko',
-            'Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko',
-            'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.0; Trident/5.0)',
-            'Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko',
-            'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)',
-            'Mozilla/5.0 (Windows NT 6.1; Win64; x64; Trident/7.0; rv:11.0) like Gecko',
-            'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)',
-            'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)',
-            'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)'
-        ]
 
     def get_proxies(self):
         """
@@ -242,14 +209,14 @@ class ScrapePageCommand(ScrapeCommand):
         # Return the list
         return proxies
 
-    @retry((requests.exceptions.RequestException, requests.exceptions.ReadTimeout))
+    @retry((requests.exceptions.RequestException))
     def get_url(self, url, retries=1, request_type='GET'):
         """
         Returns the response from a URL, retries if it fails.
         """
         # Set the headers
         headers = {
-            'User-Agent': 'Googlebot/2.1', # 'California Civic Data Coalition (cacivicdata@gmail.com)',
+            'User-Agent': 'California Civic Data Coalition (cacivicdata@gmail.com)',
         }
 
         # Set the proxy
@@ -263,7 +230,7 @@ class ScrapePageCommand(ScrapeCommand):
         if self.verbosity > 2:
             self.log(" Making a {} request for {} with proxy {}".format(request_type, url, proxy))
 
-        # Make the request and return the result
+        Make the request and return the result
         return getattr(requests, request_type.lower())(
             url,
             headers=headers,
