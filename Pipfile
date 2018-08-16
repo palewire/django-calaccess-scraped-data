@@ -4,20 +4,16 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-Django = "==1.11"
+Django = "==2.1.*"
 pytz = "*"
-"beautifulsoup4" = "*"
-requests = "*"
-mysqlclient = "*"
-"psycopg2" = "*"
+"psycopg2-binary" = "*"
+
+[dev-packages]
+twine = "*"
 "flake8" = "*"
 "flake8-docstrings" = "*"
 coverage = "*"
 python-coveralls = "*"
-twine = "*"
-incapsula = "*"
-
-[dev-packages]
 
 [requires]
 python_version = "3.6"

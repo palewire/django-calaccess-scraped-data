@@ -1,13 +1,10 @@
 # The app
-Django==1.11.*
+Django==2.1.*
 pytz
-beautifulsoup4
-requests
 scrapy-calaccess-crawler
 # -e git://github.com/california-civic-data-coalition/scrapy-calaccess-crawler.git#egg=calaccess_crawler
 
 # Databases
-mysqlclient
 psycopg2
 
 # Testing
