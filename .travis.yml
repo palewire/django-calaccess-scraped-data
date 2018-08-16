@@ -4,7 +4,6 @@ cache:
   - pip
 
 python:
- - "2.7"
  - "3.5"
  - "3.6"
  - "3.7-dev"
@@ -16,10 +15,6 @@ env:
 
 matrix:
   exclude:
-  - python: "2.7"
-    env: DJANGO_VERSION=2.0.* DATABASE_SETTINGS='settings_postgresql.py'
-  - python: "2.7"
-    env: DJANGO_VERSION=2.1.* DATABASE_SETTINGS='settings_postgresql.py'
   - python: "3.7-dev"
     env: DJANGO_VERSION=1.11.* DATABASE_SETTINGS='settings_postgresql.py'
 
