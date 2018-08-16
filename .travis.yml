@@ -8,6 +8,9 @@ python:
  - "3.6"
  - "3.7-dev"
 
+addons:
+ postgresql: "9.6"
+
 env:
  - DJANGO_VERSION=1.11.*
  - DJANGO_VERSION=2.0.*
