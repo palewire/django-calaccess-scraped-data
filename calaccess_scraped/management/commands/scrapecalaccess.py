@@ -3,13 +3,21 @@
 """
 Run all scraper commands.
 """
+# Files
 import os
 import csv
-from django.conf import settings
-from calaccess_scraped import models
+
+# Time
+import time
 from django.utils.timezone import now
+
+# Scrapy
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
+
+# Django
+from django.conf import settings
+from calaccess_scraped import models
 from calaccess_scraped.management.commands import CalAccessCommand
 
 
@@ -17,7 +25,7 @@ class Command(CalAccessCommand):
     """
     Run all scraper commands.
     """
-    help = "Run all scraper commands"
+    help = "Scrape CAL-ACCESS data and sync it with the database"
     cache_dir = os.path.join(settings.BASE_DIR, ".scraper_cache")
 
     def add_arguments(self, parser):
@@ -87,9 +95,12 @@ class Command(CalAccessCommand):
 
         # Run the scrape
         process.crawl('incumbents')
-        process.crawl('propositions')
-        process.crawl('candidates')
+        #process.crawl('propositions')
+        #process.crawl('candidates')
         process.start()
+        process.stop()
+        print("Sleeping 10 seconds to let scrapy process finish")
+        time.sleep(10)
 
     def open_csv(self, model):
         """

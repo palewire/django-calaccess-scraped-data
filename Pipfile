@@ -7,6 +7,7 @@ name = "pypi"
 Django = "==2.1.*"
 pytz = "*"
 "psycopg2-binary" = "*"
+"scrapy-calaccess-crawler" = "*"
 
 [dev-packages]
 twine = "*"
