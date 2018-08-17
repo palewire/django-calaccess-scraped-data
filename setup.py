@@ -5,8 +5,9 @@ from distutils.core import Command
 from setuptools import setup, find_packages
 
 
-with open(os.path.join(os.path.dirname(__file__), fname)) as f:
-    return f.read()
+def read(fname):
+    with open(os.path.join(os.path.dirname(__file__), fname)) as f:
+        return f.read()
 
 
 class TestCommand(Command):
