@@ -95,8 +95,8 @@ class Command(CalAccessCommand):
 
         # Run the scrape
         process.crawl('incumbents')
-        #process.crawl('propositions')
-        #process.crawl('candidates')
+        process.crawl('propositions')
+        process.crawl('candidates')
         process.start()
         process.stop()
         print("Sleeping 10 seconds to let scrapy process finish")
