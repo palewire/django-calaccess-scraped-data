@@ -1,6 +1,3 @@
-django-calaccess-scraped-data
-=============================
-
 A Django app to scrape campaign-finance data from the California Secretary of State’s `CAL-ACCESS <http://www.sos.ca.gov/prd/cal-access/>`__ website
 
 |Build Status| |PyPI version| |Coverage Status| |Documentation Status|

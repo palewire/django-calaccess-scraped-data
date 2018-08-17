@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from setuptools import setup, find_packages
+import os
 from distutils.core import Command
+from setuptools import setup, find_packages
+
+
+with open(os.path.join(os.path.dirname(__file__), fname)) as f:
+    return f.read()
 
 
 class TestCommand(Command):
@@ -33,19 +38,45 @@ class TestCommand(Command):
 
 setup(
     name='django-calaccess-scraped-data',
-    version='0.2.0',
-    license='MIT',
+    version='1.0.0',
+    author='California Civic Data Coalition',
+    author_email='cacivicdata@gmail.com',
+    url='http://django-calaccess.californiacivicdata.org',
     description='A Django app to scrape campaign-finance data from '
                 'the California Secretary of State’s CAL-ACCESS website',
-    author='California Civic Data Coalition',
-    url='http://django-calaccess.californiacivicdata.org',
-    author_email='cacivicdata@gmail.com',
+    long_description=read('README.rst'),
+    license='MIT',
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,  # because we're including static files
+    cmdclass={'test': TestCommand},
     install_requires=(
         'django>=1.11',
         'scrapy-calaccess-crawler>=0.0.1'
     ),
-    cmdclass={'test': TestCommand,}
+    classifiers=(
+        'Development Status :: 5 - Production/Stable',
+        'Operating System :: OS Independent',
+        'Intended Audience :: Developers',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Framework :: Django',
+        'Framework :: Django :: 1.11',
+        'Framework :: Django :: 2.0',
+        'Framework :: Django :: 2.1',
+        'License :: OSI Approved :: MIT License'
+    ),
+    project_urls={
+        'Project': 'https://www.californiacivicdata.org/',
+        'Documentation': 'http://django-calaccess.californiacivicdata.org',
+        'Funding': 'https://www.californiacivicdata.org/about/',
+        'Source': 'https://github.com/california-civic-data-coalition/django-calaccess-scraped-data',
+        'Coverage': 'https://coveralls.io/github/california-civic-data-coalition/django-calaccess-scraped-data?branch=master',
+        'Tracker': 'https://github.com/california-civic-data-coalition/django-calaccess-scraped-data/issues'
+    },
 )
