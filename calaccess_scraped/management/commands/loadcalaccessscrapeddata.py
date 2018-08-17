@@ -8,12 +8,7 @@ import os
 import csv
 
 # Time
-import time
 from django.utils.timezone import now
-
-# Scrapy
-from scrapy.crawler import CrawlerProcess
-from scrapy.utils.project import get_project_settings
 
 # Django
 from django.conf import settings
@@ -39,13 +34,6 @@ class Command(CalAccessCommand):
             default=False,
             help='Flush database tables'
         )
-        parser.add_argument(
-            '--cache-only',
-            action='store_false',
-            dest='update_cache',
-            default=True,
-            help="Skip the scraper's update checks. Use only cached files."
-        )
 
     def handle(self, *args, **options):
         """
@@ -55,18 +43,10 @@ class Command(CalAccessCommand):
 
         # Parse the arguments
         self.force_flush = options.get("force_flush")
-        self.update_cache = options.get("update_cache")
-
-        # Verify the cache_dir exists
-        os.path.exists(self.cache_dir) or os.mkdir(self.cache_dir)
 
         # Flush, if asked for.
         if self.force_flush:
             self.flush()
-
-        # Scrape, unless asked not to.
-        if self.update_cache:
-            self.scrape()
 
         # Sync the scrape with the database.
         self.sync()
@@ -83,24 +63,6 @@ class Command(CalAccessCommand):
         models.CandidateElection.objects.all().delete()
         models.Incumbent.objects.all().delete()
         models.IncumbentElection.objects.all().delete()
-
-    def scrape(self):
-        """
-        Use Scrapy to crawl the CAL-ACCESS website and harvest data.
-        """
-        # Configure Scrapy
-        os.environ['SCRAPY_SETTINGS_MODULE'] = 'calaccess_crawler.settings'
-        os.environ['SCRAPY_EXPORT_DIR'] = self.cache_dir
-        process = CrawlerProcess(get_project_settings())
-
-        # Run the scrape
-        process.crawl('incumbents')
-        process.crawl('propositions')
-        process.crawl('candidates')
-        process.start()
-        process.stop()
-        print("Sleeping 10 seconds to let scrapy process finish")
-        time.sleep(10)
 
     def open_csv(self, model):
         """
