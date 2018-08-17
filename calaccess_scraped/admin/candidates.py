@@ -35,6 +35,7 @@ class CandidateAdmin(BaseAdmin):
         "election"
     )
     list_filter = (
+        "election__name",
         "office_name",
     )
     list_per_page = 500

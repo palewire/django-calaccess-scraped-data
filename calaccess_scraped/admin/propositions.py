@@ -33,6 +33,9 @@ class PropositionAdmin(BaseAdmin):
         "name",
         "election",
     )
+    list_filter = (
+        "election",
+    )
     list_per_page = 500
     search_fields = (
         "name",
