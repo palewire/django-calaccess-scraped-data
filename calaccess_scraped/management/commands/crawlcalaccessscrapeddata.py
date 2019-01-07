@@ -21,6 +21,7 @@ class Command(CalAccessCommand):
     """
     help = "Scrape CAL-ACCESS data and sync it with the database"
     cache_dir = os.path.join(settings.BASE_DIR, ".scraper_cache")
+    os.path.exists(cache_dir) or os.mkdirs(cache_dir)
 
     def handle(self, *args, **options):
         """
