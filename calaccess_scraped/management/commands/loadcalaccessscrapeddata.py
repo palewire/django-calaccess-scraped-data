@@ -12,7 +12,6 @@ from calaccess_scraped import get_data_directory
 from django.utils.timezone import now
 
 # Django
-from django.conf import settings
 from calaccess_scraped import models
 from calaccess_scraped.management.commands import CalAccessCommand
 
