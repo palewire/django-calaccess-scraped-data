@@ -17,7 +17,7 @@ class ScrapedDataVersionAdmin(BaseAdmin):
     list_display = (
         "id",
         "process_start_datetime",
-        "process_finish_datetime",
+        "process_finish_datetime"
     )
     list_display_links = ('process_start_datetime',)
     list_filter = ("process_finish_datetime",)

@@ -14,13 +14,9 @@ class CandidateElectionAdmin(BaseAdmin):
     """
     Custom admin for CandidateElectionAdmin model.
     """
-    list_display = (
-        "name",
-    )
+    list_display = ("name",)
     list_per_page = 500
-    search_fields = (
-        "name",
-    )
+    search_fields = ("name",)
 
 
 @admin.register(models.Candidate)
@@ -36,13 +32,13 @@ class CandidateAdmin(BaseAdmin):
     )
     list_filter = (
         "election__name",
-        "office_name",
+        "office_name"
     )
     list_per_page = 500
     search_fields = (
         "scraped_id",
         "name",
-        "office_name",
+        "office_name"
     )
 
 
@@ -55,12 +51,12 @@ class CandidateCommitteeAdmin(BaseAdmin):
         "scraped_id",
         "name",
         "candidate_id",
-        "status",
+        "status"
     )
     list_per_page = 500
     search_fields = (
         "scraped_id",
         "name",
         "candidate_id",
-        "status",
+        "status"
     )

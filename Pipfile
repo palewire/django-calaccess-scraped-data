@@ -6,10 +6,9 @@ name = "pypi"
 [packages]
 Django = "==2.1.*"
 pytz = "*"
-"psycopg2-binary" = "*"
-"scrapy-calaccess-crawler" = "*"
 
 [dev-packages]
+"psycopg2-binary" = "*"
 twine = "*"
 "flake8" = "*"
 "flake8-docstrings" = "*"

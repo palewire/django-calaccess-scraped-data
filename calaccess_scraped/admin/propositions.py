@@ -14,13 +14,9 @@ class PropositionElectionAdmin(BaseAdmin):
     """
     Custom admin for PropositionElectionAdmin model.
     """
-    list_display = (
-        "name",
-    )
+    list_display = ("name",)
     list_per_page = 500
-    search_fields = (
-        "name",
-    )
+    search_fields = ("name",)
 
 
 @admin.register(models.Proposition)
@@ -31,11 +27,9 @@ class PropositionAdmin(BaseAdmin):
     list_display = (
         "scraped_id",
         "name",
-        "election",
+        "election"
     )
-    list_filter = (
-        "election",
-    )
+    list_filter = ("election",)
     list_per_page = 500
     search_fields = (
         "name",
@@ -52,12 +46,12 @@ class PropositionCommitteeAdmin(BaseAdmin):
         "scraped_id",
         "name",
         "position",
-        "proposition",
+        "proposition"
     )
     list_per_page = 500
     search_fields = (
         "scraped_id",
         "name",
         "position",
-        "proposition",
+        "proposition"
     )

@@ -39,7 +39,7 @@ class TestCommand(Command):
 
 setup(
     name='django-calaccess-scraped-data',
-    version='1.0.0',
+    version='2.0.0',
     author='California Civic Data Coalition',
     author_email='cacivicdata@gmail.com',
     url='http://django-calaccess.californiacivicdata.org',
@@ -52,15 +52,14 @@ setup(
     zip_safe=False,  # because we're including static files
     cmdclass={'test': TestCommand},
     install_requires=(
-        'django>=1.11'
+        'django>=1.11',
+        'pytz'
     ),
     classifiers=(
         'Development Status :: 5 - Production/Stable',
         'Operating System :: OS Independent',
         'Intended Audience :: Developers',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',

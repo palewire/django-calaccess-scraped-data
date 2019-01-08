@@ -16,12 +16,10 @@ class IncumbentElectionAdmin(BaseAdmin):
     """
     list_display = (
         "name",
-        "date",
+        "date"
     )
     list_per_page = 500
-    search_fields = (
-        "name",
-    )
+    search_fields = ("name",)
 
 
 @admin.register(models.Incumbent)
@@ -34,17 +32,17 @@ class IncumbentAdmin(BaseAdmin):
         "name",
         "category",
         "office_name",
-        "session",
+        "session"
     )
     list_filter = (
         "category",
         "office_name",
-        "session",
+        "session"
     )
     list_per_page = 500
     search_fields = (
         "scraped_id",
         "name",
         "category",
-        "office_name",
+        "office_name"
     )
