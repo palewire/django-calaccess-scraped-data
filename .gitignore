@@ -16,7 +16,6 @@ docs/_build
 cover
 bower_components
 node_modules
-data
 CSV
 ****-**-**_**-**-**/
 .scraper_cache/

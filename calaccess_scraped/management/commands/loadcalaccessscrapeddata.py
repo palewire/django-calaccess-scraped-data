@@ -6,6 +6,7 @@ Run all scraper commands.
 # Files
 import os
 import csv
+from calaccess_scraped import get_data_directory
 
 # Time
 from django.utils.timezone import now
@@ -21,7 +22,7 @@ class Command(CalAccessCommand):
     Run all scraper commands.
     """
     help = "Scrape CAL-ACCESS data and sync it with the database"
-    cache_dir = os.path.join(settings.BASE_DIR, ".scraper_cache")
+    data_dir = get_data_directory()
 
     def add_arguments(self, parser):
         """
@@ -69,12 +70,12 @@ class Command(CalAccessCommand):
         Returns a DictReader with all the scraped records for the provided model.
         """
         file_name = "{}Item.csv".format(model().klass_name)
-        file_path = os.path.join(self.cache_dir, file_name)
-        file_obj = open(file_path, 'r')
-        file_reader = list(csv.DictReader(file_obj))
-        if self.verbosity:
-            self.log("Syncing {} {} scraped items".format(len(file_reader), model().klass_name))
-        return file_reader
+        file_path = os.path.join(self.data_dir, file_name)
+        with open(file_path, 'r') as file_obj:
+            file_reader = list(csv.DictReader(file_obj))
+            if self.verbosity:
+                self.log("Syncing {} {} scraped items".format(len(file_reader), model().klass_name))
+            return file_reader
 
     def save_row(self, model, **row):
         """

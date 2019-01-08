@@ -1,8 +1,6 @@
 # The app
 Django==2.1.*
 pytz
-scrapy-calaccess-crawler
-# -e git://github.com/california-civic-data-coalition/scrapy-calaccess-crawler.git#egg=calaccess_crawler
 
 # Databases
 psycopg2

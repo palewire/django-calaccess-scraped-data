@@ -52,8 +52,7 @@ setup(
     zip_safe=False,  # because we're including static files
     cmdclass={'test': TestCommand},
     install_requires=(
-        'django>=1.11',
-        'scrapy-calaccess-crawler>=0.0.1'
+        'django>=1.11'
     ),
     classifiers=(
         'Development Status :: 5 - Production/Stable',
