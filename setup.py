@@ -52,7 +52,7 @@ setup(
     zip_safe=False,  # because we're including static files
     cmdclass={'test': TestCommand},
     install_requires=(
-        'django>=1.11',
+        'django>=3.2.*',
         'pytz'
     ),
     classifiers=(
@@ -61,21 +61,18 @@ setup(
         'Intended Audience :: Developers',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Framework :: Django',
-        'Framework :: Django :: 1.11',
-        'Framework :: Django :: 2.0',
-        'Framework :: Django :: 2.1',
+        'Framework :: Django :: 3.2',
         'License :: OSI Approved :: MIT License'
     ),
     project_urls={
         'Project': 'https://www.californiacivicdata.org/',
-        'Documentation': 'http://django-calaccess.californiacivicdata.org',
+        'Documentation': 'https://django-calaccess.californiacivicdata.org',
         'Funding': 'https://www.californiacivicdata.org/about/',
         'Source': 'https://github.com/california-civic-data-coalition/django-calaccess-scraped-data',
-        'Coverage': 'https://coveralls.io/github/california-civic-data-coalition/django-calaccess-scraped-data?branch=master',
         'Tracker': 'https://github.com/california-civic-data-coalition/django-calaccess-scraped-data/issues'
     },
 )
