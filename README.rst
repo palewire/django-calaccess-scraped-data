@@ -3,13 +3,13 @@ A Django app to scrape campaign-finance data from the California Secretary of St
 |Build Status| |PyPI version| |Documentation Status|
 
 -  Documentation:
-   `django-calaccess.californiacivicdata.org <http://django-calaccess.californiacivicdata.org>`__
+   `django-calaccess.californiacivicdata.org <https://django-calaccess.californiacivicdata.org>`__
 -  Issues:
    `github.com/california-civic-data-coalition/django-calaccess-scraped-data/issues <https://github.com/california-civic-data-coalition/django-calaccess-scraped-data/issues>`__
 -  Packaging:
    `pypi.python.org/pypi/django-calaccess-scraped-data <https://pypi.python.org/pypi/django-calaccess-scraped-data>`__
 -  Testing:
-   `https://github.com/california-civic-data-coalition/django-calaccess-scraped-data/actions <https://github.com/california-civic-data-coalition/django-calaccess-scraped-data/actions/workflows/tests.yaml>`__
+   `github.com/california-civic-data-coalition/django-calaccess-scraped-data/actions <https://github.com/california-civic-data-coalition/django-calaccess-scraped-data/actions/workflows/tests.yaml>`__
 
 .. |Build Status| image:: https://github.com/california-civic-data-coalition/django-calaccess-scraped-data/actions/workflows/tests.yaml/badge.svg
     :target: https://github.com/california-civic-data-coalition/django-calaccess-scraped-data/actions/workflows/tests.yaml
