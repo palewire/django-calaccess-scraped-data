@@ -5,11 +5,9 @@ Models for storing candidate information scraped from the CAL-ACCESS website.
 """
 from __future__ import unicode_literals
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from calaccess_scraped.models.base import BaseScrapedModel
 
 
-@python_2_unicode_compatible
 class Candidate(BaseScrapedModel):
     """
     A candidate for office scraped from the California Secretary of State's site.

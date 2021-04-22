@@ -6,10 +6,8 @@ Models for tracking processing of CAL-ACCESS snapshots over time.
 from __future__ import unicode_literals
 from django.db import models
 from datetime import datetime
-from django.utils.encoding import python_2_unicode_compatible
 
 
-@python_2_unicode_compatible
 class ScrapedDataVersion(models.Model):
     """
     A version of CAL-ACCESS scraped data.

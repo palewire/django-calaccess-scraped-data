@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-Django = "==2.1.*"
+Django = "==3.2.*"
 pytz = "*"
 
 [dev-packages]
@@ -13,7 +13,6 @@ twine = "*"
 "flake8" = "*"
 "flake8-docstrings" = "*"
 coverage = "*"
-python-coveralls = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.8"

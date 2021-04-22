@@ -5,14 +5,12 @@ Models for storing incumbent information scraped from the CAL-ACCESS website.
 """
 from __future__ import unicode_literals
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from .base import (
     BaseScrapedModel,
     BaseScrapedElection,
 )
 
 
-@python_2_unicode_compatible
 class Incumbent(BaseScrapedModel):
     """
     An incumbent state official scraped from the California Secretary of State's site.
@@ -41,7 +39,6 @@ class Incumbent(BaseScrapedModel):
         return self.name
 
 
-@python_2_unicode_compatible
 class IncumbentElection(BaseScrapedElection):
     """
     An election day scraped as part of the `scrapecalaccessincumbents` command.

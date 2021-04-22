@@ -12,3 +12,4 @@ class CalAccessScrapedConfig(AppConfig):
     """
     name = 'calaccess_scraped'
     verbose_name = "CAL-ACCESS scraped data"
+    default_auto_field = 'django.db.models.BigAutoField'
