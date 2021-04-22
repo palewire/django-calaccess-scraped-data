@@ -37,5 +37,5 @@ jobs:
 
       - name: Test
         run: |
-          cp example/settings_${{ matrix.settings }}.py.template example/settings_local.py
+          cp example/project/settings_${{ matrix.settings }}.py.template example/project/settings_local.py
           make test
