@@ -24,7 +24,7 @@ jobs:
         uses: harmon758/postgresql-action@v1
         with:
           postgresql version: '11'
-          postgresql: calaccess_raw
+          postgresql: calaccess_scraped
           postgresql user: postgres
           postgresql password: postgres
 
