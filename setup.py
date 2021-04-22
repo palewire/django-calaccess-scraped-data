@@ -73,6 +73,7 @@ setup(
         'Documentation': 'https://django-calaccess.californiacivicdata.org',
         'Funding': 'https://www.californiacivicdata.org/about/',
         'Source': 'https://github.com/california-civic-data-coalition/django-calaccess-scraped-data',
+        'Testing': 'https://github.com/california-civic-data-coalition/django-calaccess-scraped-data/actions/workflows/tests.yaml',
         'Tracker': 'https://github.com/california-civic-data-coalition/django-calaccess-scraped-data/issues'
     },
 )
