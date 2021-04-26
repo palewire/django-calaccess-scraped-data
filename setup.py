@@ -39,7 +39,7 @@ class TestCommand(Command):
 
 setup(
     name='django-calaccess-scraped-data',
-    version='3.0.0',
+    version='3.0.1',
     author='California Civic Data Coalition',
     author_email='cacivicdata@gmail.com',
     url='http://django-calaccess.californiacivicdata.org',
@@ -64,6 +64,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Framework :: Django',
         'Framework :: Django :: 3.2',
         'License :: OSI Approved :: MIT License'
