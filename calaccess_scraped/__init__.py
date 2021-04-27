@@ -12,3 +12,10 @@ def get_data_directory():
     Returns directory for scraped data.
     """
     return os.path.join(os.path.dirname(__file__), 'data')
+
+
+def get_html_directory():
+    """
+    Returns directory for raw HTML to scrape.
+    """
+    return os.path.join(os.path.dirname(__file__), 'html')

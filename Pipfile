@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 Django = "==3.2.*"
 pytz = "*"
+bs4 = "*"
 
 [dev-packages]
 "psycopg2-binary" = "*"
