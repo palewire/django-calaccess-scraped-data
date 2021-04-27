@@ -2,3 +2,4 @@ include LICENSE
 include README.rst
 recursive-include calaccess_scraped/fixtures *
 recursive-include calaccess_scraped/data *
+recursive-include calaccess_scraped/html *
