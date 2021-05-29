@@ -53,14 +53,26 @@ class Command(CalAccessCommand):
                     'year': election_id,
                 }
                 election_list.append(election_dict)
-#                prop_urls = table.xpath("//a[@href]/@href")
-#                for url in prop_urls:
-#                    full_url = "http://cal-access.sos.ca.gov/Campaign/Measures" + url
+                prop_urls = table.find_all("a")
+                for a in prop_urls:
+                    prop_dict = dict(
+                        url="http://cal-access.sos.ca.gov/Campaign/Measures" + a['href'],
+                        election_name=election_dict['name'],
+                        id=re.match(r'.+id=(\d+)', a['href']).group(1),
+                        name=a.text
+                    )
+                    prop_list.append(prop_dict)
 
         with open(os.path.join(self.data_dir, 'PropositionElectionItem.csv'), 'w') as f:
             writer = csv.DictWriter(f, fieldnames=["name", "url", "year"])
             writer.writeheader()
             writer.writerows(sorted(election_list, key=lambda x: x['year'], reverse=True))
+
+        with open(os.path.join(self.data_dir, 'PropositionItem.csv'), 'w') as f:
+            writer = csv.DictWriter(f, fieldnames=["url", "election_name", "id", "name"])
+            writer.writeheader()
+            writer.writerows(prop_list)
+
 
 #                    full_url = urljoin("http://cal-access.sos.ca.gov/Campaign/Measures/", url)
 #                    yield scrapy.Request(
