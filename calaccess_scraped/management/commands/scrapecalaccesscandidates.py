@@ -11,8 +11,6 @@ import glob
 from bs4 import BeautifulSoup
 from calaccess_scraped import get_data_directory, get_html_directory
 
-# Time
-from django.utils.timezone import now
 
 # Django
 from calaccess_scraped.management.commands import CalAccessCommand
@@ -20,7 +18,7 @@ from calaccess_scraped.management.commands import CalAccessCommand
 
 class Command(CalAccessCommand):
     """
-    Scrape the candidate data
+    Scrape the candidate data.
     """
     help = "Scrape CAL-ACCESS data and sync it with the database"
     data_dir = get_data_directory()
@@ -44,10 +42,10 @@ class Command(CalAccessCommand):
             url = f"https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&electNav={election_id}"
 
             links = soup.find_all('a', href=re.compile(r'^.*&electNav=\d+'))
-            this_link = [l for l in links if 'electNav={}'.format(election_id) in l['href']][-1]
+            this_link = [link for link in links if 'electNav={}'.format(election_id) in link['href']][-1]
 
             name = this_link.find_next_sibling('span').text.strip()
-            
+
             election_dict = dict(
                 url=url,
                 id=election_id,
@@ -77,7 +75,6 @@ class Command(CalAccessCommand):
                         continue
 
                     # Pull the candidates out
-                    candidates = []
                     for c in office.findAll('a', {'class': 'sublink2'}):
                         candidate_dict = dict(
                             office=title_el.text.strip(),

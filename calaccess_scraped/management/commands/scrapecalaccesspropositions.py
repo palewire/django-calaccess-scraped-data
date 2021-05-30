@@ -9,13 +9,9 @@ import os
 import csv
 import glob
 import time
-from datetime import datetime
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from calaccess_scraped import get_data_directory, get_html_directory
-
-# Time
-from django.utils.timezone import now
 
 # Django
 from calaccess_scraped.management.commands import CalAccessCommand
@@ -23,7 +19,7 @@ from calaccess_scraped.management.commands import CalAccessCommand
 
 class Command(CalAccessCommand):
     """
-    Scrape the candidate data
+    Scrape the candidate data.
     """
     help = "Scrape CAL-ACCESS data and sync it with the database"
     data_dir = get_data_directory()
@@ -110,7 +106,14 @@ class Command(CalAccessCommand):
                     committee_list.append(committee_dict)
 
         with open(os.path.join(self.data_dir, 'PropositionCommitteeItem.csv'), 'w') as f:
-            writer = csv.DictWriter(f, fieldnames=["election_name", "proposition_id", "proposition_name", "id", "name", "position", "url"])
+            writer = csv.DictWriter(f, fieldnames=[
+                "election_name",
+                "proposition_id",
+                "proposition_name",
+                "id",
+                "name",
+                "position",
+                "url"
+            ])
             writer.writeheader()
             writer.writerows(committee_list)
-
