@@ -8,6 +8,7 @@ Django = "==3.2.*"
 pytz = "*"
 bs4 = "*"
 lxml = "*"
+selenium = "*"
 
 [dev-packages]
 "psycopg2-binary" = "*"

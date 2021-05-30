@@ -53,7 +53,9 @@ setup(
     cmdclass={'test': TestCommand},
     install_requires=(
         'django>=3.2.*',
-        'pytz'
+        'pytz',
+        'bs4',
+        'selenium',
     ),
     classifiers=(
         'Development Status :: 5 - Production/Stable',

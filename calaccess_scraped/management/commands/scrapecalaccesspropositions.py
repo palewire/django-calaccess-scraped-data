@@ -8,8 +8,10 @@ import re
 import os
 import csv
 import glob
+import time
 from datetime import datetime
 from bs4 import BeautifulSoup
+from selenium import webdriver
 from calaccess_scraped import get_data_directory, get_html_directory
 
 # Time
@@ -56,7 +58,7 @@ class Command(CalAccessCommand):
                 prop_urls = table.find_all("a")
                 for a in prop_urls:
                     prop_dict = dict(
-                        url="http://cal-access.sos.ca.gov/Campaign/Measures" + a['href'],
+                        url="http://cal-access.sos.ca.gov/Campaign/Measures/" + a['href'],
                         election_name=election_dict['name'],
                         id=re.match(r'.+id=(\d+)', a['href']).group(1),
                         name=a.text
@@ -73,58 +75,42 @@ class Command(CalAccessCommand):
             writer.writeheader()
             writer.writerows(prop_list)
 
+        committee_list = []
+        for prop in prop_list:
+            html_path = os.path.join(self.html_dir, 'proposition_committees', prop['id'] + ".html")
+            if os.path.exists(html_path):
+                print(f"Opening {html_path}")
+            else:
+                print(f"Downloading {prop['url']}")
+                fireFoxOptions = webdriver.FirefoxOptions()
+                fireFoxOptions.set_headless()
+                browser = webdriver.Firefox(firefox_options=fireFoxOptions)
+                browser.get(prop['url'])
+                with open(html_path, 'w') as f:
+                    f.write(browser.page_source)
+                browser.close()
+                time.sleep(1)
 
-#                    full_url = urljoin("http://cal-access.sos.ca.gov/Campaign/Measures/", url)
-#                    yield scrapy.Request(
-#                        url=full_url,
-#                        callback=self.parse_proposition,
-#                        meta={
-#                            "election_name": name,
-#                        }
-#                    )
+            with open(html_path, 'r') as f:
+                html = f.read()
 
-#    def parse_proposition(self, response):
-#        """
-#        Scrape all the committees from proposition detail pages.
-#        """
-#        soup = BeautifulSoup(response.body, 'lxml')
+            prop_soup = BeautifulSoup(html, "html.parser")
+            for table in prop_soup.findAll('table', cellpadding='4'):
+                for row in table.find_all("tr")[1:]:
+                    cell_list = row.find_all("td")
+                    committee_dict = dict(
+                        election_name=prop['election_name'],
+                        proposition_id=prop['id'],
+                        proposition_name=prop['name'],
+                        id=cell_list[0].text,
+                        name=cell_list[1].text,
+                        position=cell_list[2].text,
+                        url="http://cal-access.sos.ca.gov" + cell_list[1].a['href']
+                    )
+                    committee_list.append(committee_dict)
 
-#        proposition_name = soup.find('span', id='measureName').text
-#        proposition_id = re.match(r'.+id=(\d+)', response.url).group(1)
+        with open(os.path.join(self.data_dir, 'PropositionCommitteeItem.csv'), 'w') as f:
+            writer = csv.DictWriter(f, fieldnames=["election_name", "proposition_id", "proposition_name", "id", "name", "position", "url"])
+            writer.writeheader()
+            writer.writerows(committee_list)
 
-#        prop = PropositionLoader()
-#        prop.add_value("id", proposition_id)
-#        prop.add_value("name", proposition_name)
-#        prop.add_value("election_name", response.meta['election_name'])
-#        prop.add_value("url", response.url)
-#        yield prop.load_item()
-
-#        # Loop through all the tables on the page
-#        # which contain the committees on each side of the measure
-#        for table in soup.findAll('table', cellpadding='4'):
-#            item = PropositionCommitteeLoader(response=response)
-#            item.add_value("election_name", response.meta['election_name'])
-#            item.add_value("proposition_name", proposition_name)
-#            item.add_value("proposition_id", proposition_id)
-
-#            # Pull the data box
-#            data = table.findAll('span', {'class': 'txt7'})
-
-#            # The URL
-#            committee_url = table.find('a', {'class': 'sublink2'})
-#            item.add_value("url", urljoin("http://cal-access.sos.ca.gov", committee_url['href']))
-
-#            # The name
-#            committee_name = committee_url.text
-#            item.add_value("name", committee_name)
-
-#            # ID sometimes refers to xref_filer_id rather than filer_id_raw
-#            committee_id = data[0].text
-#            item.add_value("id", committee_id)
-
-#            # Does the committee support or oppose the measure?
-#            committee_position = data[1].text.strip()
-#            item.add_value("position", committee_position)
-
-#            # Load it
-#            yield item.load_item()
