@@ -39,9 +39,9 @@ class TestCommand(Command):
 
 setup(
     name='django-calaccess-scraped-data',
-    version='3.0.1',
+    version='3.1.0',
     author='California Civic Data Coalition',
-    author_email='cacivicdata@gmail.com',
+    author_email='b@palewi.re',
     url='http://django-calaccess.californiacivicdata.org',
     description='A Django app to scrape campaign-finance data from '
                 'the California Secretary of State’s CAL-ACCESS website',
