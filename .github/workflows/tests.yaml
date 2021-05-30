@@ -46,7 +46,7 @@ jobs:
 
       - id: sync-pipfile
         name: Sync pipfile
-        run: pipenv sync
+        run: pipenv sync --dev
         shell: bash
 
       - name: Test
