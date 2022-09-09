@@ -39,7 +39,7 @@ class TestCommand(Command):
 
 setup(
     name='django-calaccess-scraped-data',
-    version='3.1.0',
+    version='3.2.0',
     author='California Civic Data Coalition',
     author_email='b@palewi.re',
     url='http://django-calaccess.californiacivicdata.org',
