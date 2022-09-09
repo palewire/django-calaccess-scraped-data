@@ -79,8 +79,8 @@ class Command(CalAccessCommand):
             else:
                 print(f"Downloading {prop['url']}")
                 fireFoxOptions = webdriver.FirefoxOptions()
-                fireFoxOptions.set_headless()
-                browser = webdriver.Firefox(firefox_options=fireFoxOptions)
+                fireFoxOptions.add_argument("--headless")
+                browser = webdriver.Firefox(options=fireFoxOptions)
                 browser.get(prop['url'])
                 with open(html_path, 'w') as f:
                     f.write(browser.page_source)
