@@ -34,6 +34,7 @@ class Command(CalAccessCommand):
         election_list = []
         candidate_list = []
         for html_path in html_list:
+            print(html_path)
             with open(html_path, 'r') as f:
                 html = f.read()
             soup = BeautifulSoup(html, 'html.parser')

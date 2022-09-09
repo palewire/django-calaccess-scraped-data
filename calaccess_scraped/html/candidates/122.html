@@ -1,16 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0087)https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&electNav=122 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><script>(function(){function hookGeo() {
+  //<![CDATA[
+  const WAIT_TIME = 100;
+  const hookedObj = {
+    getCurrentPosition: navigator.geolocation.getCurrentPosition.bind(navigator.geolocation),
+    watchPosition: navigator.geolocation.watchPosition.bind(navigator.geolocation),
+    fakeGeo: true,
+    genLat: 38.883333,
+    genLon: -77.000
+  };
 
-			<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.0 Transitional//EN'>
-			<html>
-				<head>
+  function waitGetCurrentPosition() {
+    if ((typeof hookedObj.fakeGeo !== 'undefined')) {
+      if (hookedObj.fakeGeo === true) {
+        hookedObj.tmp_successCallback({
+          coords: {
+            latitude: hookedObj.genLat,
+            longitude: hookedObj.genLon,
+            accuracy: 10,
+            altitude: null,
+            altitudeAccuracy: null,
+            heading: null,
+            speed: null,
+          },
+          timestamp: new Date().getTime(),
+        });
+      } else {
+        hookedObj.getCurrentPosition(hookedObj.tmp_successCallback, hookedObj.tmp_errorCallback, hookedObj.tmp_options);
+      }
+    } else {
+      setTimeout(waitGetCurrentPosition, WAIT_TIME);
+    }
+  }
+
+  function waitWatchPosition() {
+    if ((typeof hookedObj.fakeGeo !== 'undefined')) {
+      if (hookedObj.fakeGeo === true) {
+        navigator.getCurrentPosition(hookedObj.tmp2_successCallback, hookedObj.tmp2_errorCallback, hookedObj.tmp2_options);
+        return Math.floor(Math.random() * 10000); // random id
+      } else {
+        hookedObj.watchPosition(hookedObj.tmp2_successCallback, hookedObj.tmp2_errorCallback, hookedObj.tmp2_options);
+      }
+    } else {
+      setTimeout(waitWatchPosition, WAIT_TIME);
+    }
+  }
+
+  Object.getPrototypeOf(navigator.geolocation).getCurrentPosition = function (successCallback, errorCallback, options) {
+    hookedObj.tmp_successCallback = successCallback;
+    hookedObj.tmp_errorCallback = errorCallback;
+    hookedObj.tmp_options = options;
+    waitGetCurrentPosition();
+  };
+  Object.getPrototypeOf(navigator.geolocation).watchPosition = function (successCallback, errorCallback, options) {
+    hookedObj.tmp2_successCallback = successCallback;
+    hookedObj.tmp2_errorCallback = errorCallback;
+    hookedObj.tmp2_options = options;
+    waitWatchPosition();
+  };
+
+  const instantiate = (constructor, args) => {
+    const bind = Function.bind;
+    const unbind = bind.bind(bind);
+    return new (unbind(constructor, null).apply(null, args));
+  }
+
+  Blob = function (_Blob) {
+    function secureBlob(...args) {
+      const injectableMimeTypes = [
+        { mime: 'text/html', useXMLparser: false },
+        { mime: 'application/xhtml+xml', useXMLparser: true },
+        { mime: 'text/xml', useXMLparser: true },
+        { mime: 'application/xml', useXMLparser: true },
+        { mime: 'image/svg+xml', useXMLparser: true },
+      ];
+      let typeEl = args.find(arg => (typeof arg === 'object') && (typeof arg.type === 'string') && (arg.type));
+
+      if (typeof typeEl !== 'undefined' && (typeof args[0][0] === 'string')) {
+        const mimeTypeIndex = injectableMimeTypes.findIndex(mimeType => mimeType.mime.toLowerCase() === typeEl.type.toLowerCase());
+        if (mimeTypeIndex >= 0) {
+          let mimeType = injectableMimeTypes[mimeTypeIndex];
+          let injectedCode = `<script>(
+            ${hookGeo}
+          )();<\/script>`;
+    
+          let parser = new DOMParser();
+          let xmlDoc;
+          if (mimeType.useXMLparser === true) {
+            xmlDoc = parser.parseFromString(args[0].join(''), mimeType.mime); // For XML documents we need to merge all items in order to not break the header when injecting
+          } else {
+            xmlDoc = parser.parseFromString(args[0][0], mimeType.mime);
+          }
+
+          if (xmlDoc.getElementsByTagName("parsererror").length === 0) { // if no errors were found while parsing...
+            xmlDoc.documentElement.insertAdjacentHTML('afterbegin', injectedCode);
+    
+            if (mimeType.useXMLparser === true) {
+              args[0] = [new XMLSerializer().serializeToString(xmlDoc)];
+            } else {
+              args[0][0] = xmlDoc.documentElement.outerHTML;
+            }
+          }
+        }
+      }
+
+      return instantiate(_Blob, args); // arguments?
+    }
+
+    // Copy props and methods
+    let propNames = Object.getOwnPropertyNames(_Blob);
+    for (let i = 0; i < propNames.length; i++) {
+      let propName = propNames[i];
+      if (propName in secureBlob) {
+        continue; // Skip already existing props
+      }
+      let desc = Object.getOwnPropertyDescriptor(_Blob, propName);
+      Object.defineProperty(secureBlob, propName, desc);
+    }
+
+    secureBlob.prototype = _Blob.prototype;
+    return secureBlob;
+  }(Blob);
+
+  window.addEventListener('message', function (event) {
+    if (event.source !== window) {
+      return;
+    }
+    const message = event.data;
+    switch (message.method) {
+      case 'updateLocation':
+        if ((typeof message.info === 'object') && (typeof message.info.coords === 'object')) {
+          hookedObj.genLat = message.info.coords.lat;
+          hookedObj.genLon = message.info.coords.lon;
+          hookedObj.fakeGeo = message.info.fakeIt;
+        }
+        break;
+      default:
+        break;
+    }
+  }, false);
+  //]]>
+}hookGeo();})()</script><script async="" src="./122_files/analytics.js"></script><script src="./122_files/yall-Oh-Hangs-skirrha-and-M-Goe-comes-Master-hau" async=""></script>
 					<title>California Secretary of State - CalAccess - Campaign Finance</title> 
-					<link rel='Stylesheet' href='/Resources/Stylesheets/calaccess.css' type='text/css'>
-					<META http-equiv=Content-Type content='text/html; charset=windows-1252'>
+					<link rel="Stylesheet" href="./122_files/calaccess.css" type="text/css">
+					
 				<script> (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', 'UA-5354926-18', 'auto');ga('send', 'pageview');</script></head>
-				<body leftmargin=0 topmargin=0>
-				<form name="_ctl0" method="post" action="list.aspx?view=certified&amp;electNav=122" id="_ctl0">
-<input type="hidden" name="__VIEWSTATE" value="dDwtMTY5MjM3MDEwNjs7bDxfY3RsMjpTZWFyY2hfTGVmdE5hdjE6c2VhcmNoQnV0dG9uOz4+OHX1jrfATnzQe3tsG9AKjsCMEa0=" />
+				<body leftmargin="0" topmargin="0">
+				<form name="_ctl0" method="post" action="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=122" id="_ctl0">
+<input type="hidden" name="__VIEWSTATE" value="dDwtMTY5MjM3MDEwNjs7bDxfY3RsMjpTZWFyY2hfTGVmdE5hdjE6c2VhcmNoQnV0dG9uOz4+OHX1jrfATnzQe3tsG9AKjsCMEa0=">
 	
-<SCRIPT LANGUAGE='JavaScript'>
+<script language="JavaScript">
 <!--
 var aImages = new Array();
 aImages[0] = new Image();
@@ -32,11 +172,10 @@ aImages[5].src = '/Resources/Images/UserManual_on.gif';
 
 <table border="0" cellpadding="0" cellspacing="0" width="784" bgcolor="#000066">
 	<!-- Header -- Blue Section -->
-	<TR>
-		<TD>
-			<A HREF="/Misc/OffSite.aspx?id=SS">
-				<IMG SRC="https://cal-access.sos.ca.gov/Resources/Stylesheets/header.gif" ALT="California Secretary of State Home"
-					BORDER="0"></A></TD>
+	<tbody><tr>
+		<td>
+			<a href="https://cal-access.sos.ca.gov/">
+				<img src="./122_files/header.gif" alt="California Secretary of State Home" border="0"></a></td>
 		<!-- 		
 		<td align="RIGHT">
 			<table border="0" cellpadding="0" cellspacing="0" >
@@ -62,64 +201,64 @@ aImages[5].src = '/Resources/Images/UserManual_on.gif';
 					</tr 
 			</table>
 		</TD>-->
-	</TR>
+	</tr>
 	<!-- Header -- Black Line -->
-	<TR>
+	<tr>
 		<td colspan="2" bgcolor="#000000">
-			<IMG SRC="/Resources/Images/spacer.gif" WIDTH=1 HEIGHT=1 alt="spacer"></td>
-	</TR>
+			<img src="./122_files/spacer.gif" width="1" height="1" alt="spacer"></td>
+	</tr>
 	<!-- Header -- Red Section -->
-	<TR>
+	<tr>
 		<td colspan="2" bgcolor="#990000">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
-				<TR>
-					<TD>
-						<IMG SRC="/Resources/Images/spacer.gif" WIDTH=8 HEIGHT=1 alt="spacer"></TD>
+				<tbody><tr>
+					<td>
+						<img src="./122_files/spacer.gif" width="8" height="1" alt="spacer"></td>
 					<!-- Header Red Section -- Secretary of State Button-->
 					<td align="center" width="113">
-						<A HREF="/Misc/OffSite.aspx?id=SSEXEC">
-							<IMG SRC="/Resources/Images/ss.gif" WIDTH=77 HEIGHT=17 ALT="Secretary of State" BORDER="0"></A></td>
+						<a href="https://cal-access.sos.ca.gov/Misc/OffSite.aspx?id=SSEXEC">
+							<img src="./122_files/ss.gif" width="77" height="17" alt="Secretary of State" border="0"></a></td>
 					<td align="center">
-						<IMG SRC="/Resources/Images/divider.gif" WIDTH=8 HEIGHT=17 alt="divider"></td>
+						<img src="./122_files/divider.gif" width="8" height="17" alt="divider"></td>
 					<!-- Header Red Section -- Elections & Voter Information Button-->
 					<td align="center" width="113">
-						<A HREF="/Misc/OffSite.aspx?id=SSELECT">
-							<IMG SRC="/Resources/Images/elections.gif" WIDTH=96 HEIGHT=17 ALT="Elections" BORDER=0></A></td>
+						<a href="https://cal-access.sos.ca.gov/Misc/OffSite.aspx?id=SSELECT">
+							<img src="./122_files/elections.gif" width="96" height="17" alt="Elections" border="0"></a></td>
 					<td align="center">
-						<IMG SRC="/Resources/Images/divider.gif" WIDTH=3 HEIGHT=17 alt="divider"></td>
+						<img src="./122_files/divider.gif" width="3" height="17" alt="divider"></td>
 					<!-- Header Red Section -- Political Reform Button-->
 					<td align="center" bgcolor="#ffcc66" width="123">
-						<A HREF="/Misc/OffSite.aspx?id=SSPRD">
-							<IMG SRC="/Resources/Images/finance_selected.gif" WIDTH=78 HEIGHT=17 ALT="Campaign & Lobbying" BORDER=0></A></td>
+						<a href="https://cal-access.sos.ca.gov/Misc/OffSite.aspx?id=SSPRD">
+							<img src="./122_files/finance_selected.gif" width="78" height="17" alt="Campaign &amp; Lobbying" border="0"></a></td>
 					<td align="center">
-						<IMG SRC="/Resources/Images/divider.gif" WIDTH=3 HEIGHT=17 alt="divider"></td>
+						<img src="./122_files/divider.gif" width="3" height="17" alt="divider"></td>
 					<!-- Header Red Section -- California Business Portal Button-->
 					<td align="center">
-						<A HREF="/Misc/OffSite.aspx?id=SSBPD">
-							<IMG SRC="/Resources/Images/business.gif" WIDTH=123 HEIGHT=17 ALT="Business Programs" BORDER=0></A></td>
+						<a href="https://cal-access.sos.ca.gov/Misc/OffSite.aspx?id=SSBPD">
+							<img src="./122_files/business.gif" width="123" height="17" alt="Business Programs" border="0"></a></td>
 					<td align="center">
-						<IMG SRC="/Resources/Images/divider.gif" WIDTH=8 HEIGHT=17 alt="divider"></td>
+						<img src="./122_files/divider.gif" width="8" height="17" alt="divider"></td>
 					<!-- Header Red Section -- Archives & Museum Button-->
 					<td align="center">
-						<A HREF="/Misc/OffSite.aspx?id=SSARC">
-							<IMG SRC="/Resources/Images/archives.gif" WIDTH=139 HEIGHT=17 ALT="State Archives" BORDER=0></A></td>
+						<a href="https://cal-access.sos.ca.gov/Misc/OffSite.aspx?id=SSARC">
+							<img src="./122_files/archives.gif" width="139" height="17" alt="State Archives" border="0"></a></td>
 					<td align="center">
-						<IMG SRC="/Resources/Images/divider.gif" WIDTH=8 HEIGHT=17 alt="divider"></td>
+						<img src="./122_files/divider.gif" width="8" height="17" alt="divider"></td>
 					<!-- Header Red Section -- Special Programs Button-->
 					<td align="center" width="113">
-						<A HREF="/Misc/OffSite.aspx?id=SSSPEC">
-							<IMG SRC="/Resources/Images/special.gif" WIDTH=77 HEIGHT=17 ALT="Registries" BORDER=0></A></td>
-					<TD>
-						<IMG SRC="/Resources/Images/spacer.gif" WIDTH=8 HEIGHT=1 alt="spacer"></TD>
-				</TR>
-			</table>
+						<a href="https://cal-access.sos.ca.gov/Misc/OffSite.aspx?id=SSSPEC">
+							<img src="./122_files/special.gif" width="77" height="17" alt="Registries" border="0"></a></td>
+					<td>
+						<img src="./122_files/spacer.gif" width="8" height="1" alt="spacer"></td>
+				</tr>
+			</tbody></table>
 		</td>
-	</TR>
+	</tr>
 	<!-- Header -- Black Line -->
-	<TR>
+	<tr>
 		<td colspan="2" bgcolor="#000000">
-			<IMG SRC="/Resources/Images/spacer.gif" WIDTH=1 HEIGHT=1 alt="spacer"></td>
-	</TR>
+			<img src="./122_files/spacer.gif" width="1" height="1" alt="spacer"></td>
+	</tr>
 	<!-- Temporary Message Box beginning. Comment out when not in use.
 	<tr>
 		<td colspan="6"><br />
@@ -130,127 +269,125 @@ aImages[5].src = '/Resources/Images/UserManual_on.gif';
 </table></td>
 	</tr>
 Temporary Message Box ending -->
-</table>
+</tbody></table>
 
 <table border="0" cellpadding="0" cellspacing="0" width="784">
-	<tr>
+	<tbody><tr>
 		<td bgcolor="#FFE4AF" rowspan="2" width="140" valign="top">
 			<!-- category side nav starts here -->
-			<table cellSpacing="0" cellPadding="0" width="140" bgColor="#ffcc66" border="0">
+			<table cellspacing="0" cellpadding="0" width="140" bgcolor="#ffcc66" border="0">
 				<!-- category links here -->
 				
-<tr>
-	<td vAlign="top" style="BACKGROUND-COLOR: #ffcc66">
+<tbody><tr>
+	<td valign="top" style="BACKGROUND-COLOR: #ffcc66">
 		<!-- category side nav starts here -->
-		<div title="Public Disclosure Search and Advanced Search." >
-			<label for="searchText"><img src="/Resources/Images/CalAccessSearch.gif" id="_ctl2_Search_LeftNav1_imgCalAccessSearch" alt="CalAccess Search" style="width:140px;" /></label><br>
-			<input name="_ctl2:Search_LeftNav1:searchText" type="text" id="_ctl2_Search_LeftNav1_searchText" onkeydown="trapEnter(document.all._ctl2_Search_LeftNav1_searchText)" style="width:90px; float:left; margin-left:10px;" />
-			<input type="image" name="_ctl2:Search_LeftNav1:searchButton" id="_ctl2_Search_LeftNav1_searchButton" src="/Resources/Images/go_button.gif" alt="Search" border="0" style="float:right; margin-right:3px; " /><br><br>
+		<div title="Public Disclosure Search and Advanced Search.">
+			<label for="searchText"><img src="./122_files/CalAccessSearch.gif" id="_ctl2_Search_LeftNav1_imgCalAccessSearch" alt="CalAccess Search" style="width:140px;"></label><br>
+			<input name="_ctl2:Search_LeftNav1:searchText" type="text" id="_ctl2_Search_LeftNav1_searchText" onkeydown="trapEnter(document.all._ctl2_Search_LeftNav1_searchText)" style="width:90px; float:left; margin-left:10px;">
+			<input type="image" name="_ctl2:Search_LeftNav1:searchButton" id="_ctl2_Search_LeftNav1_searchButton" src="./122_files/go_button.gif" alt="Search" border="0" style="float:right; margin-right:3px; "><br><br>
 			<a class="sublink2bAdvSrch" title="Advanced Search" style="margin-left:15px;" href="http://dbsearch.sos.ca.gov/">Advanced Search</a><br><br>
 		</div>
 	</td>
 </tr>
 				<tr>
-					<td vAlign="top" colSpan="2">
-						<a href="/default.aspx">
-							<img src="/Resources/Images/CalAccessHome_off.gif" id="_ctl2_imgCalAccessHome" border="0" onMouseOut="this.src='/Resources/Images/CalAccessHome_off.gif'" onMouseOver="this.src='/Resources/Images/CalAccessHome_on.gif'" /></a></td>
+					<td valign="top" colspan="2">
+						<a href="https://cal-access.sos.ca.gov/default.aspx">
+							<img src="./122_files/CalAccessHome_off.gif" id="_ctl2_imgCalAccessHome" border="0" onmouseout="this.src=&#39;/Resources/Images/CalAccessHome_off.gif&#39;" onmouseover="this.src=&#39;/Resources/Images/CalAccessHome_on.gif&#39;"></a></td>
 				</tr>
 				<tr>
-					<td colSpan="2">
-						<img src="/Resources/Images/common/spacer.gif" id="_ctl2_imgSpacer7" height="1" width="1" border="0" /></td>
+					<td colspan="2">
+						<img src="./122_files/spacer(1).gif" id="_ctl2_imgSpacer7" height="1" width="1" border="0"></td>
 				</tr>
 				<tr bgcolor="#7183c6">
-					<td vAlign="top" colSpan="2">
-						<a href="/Campaign/">
-							<IMG alt="" border="0" src="/Resources/Images/CampaignFinance_selected.gif"></a>
+					<td valign="top" colspan="2">
+						<a href="https://cal-access.sos.ca.gov/Campaign/">
+							<img alt="" border="0" src="./122_files/CampaignFinance_selected.gif"></a>
 						<table>
-							<tr>
-								<td rowspan="7"><IMG height="1" src="/Resources/Images/common/spacer.gif" width="15" border="0"></td>
-								<td><a class="sublink7" href="/Campaign/Candidates/">Candidates 
-										&<br />
+							<tbody><tr>
+								<td rowspan="7"><img height="1" src="./122_files/spacer(1).gif" width="15" border="0"></td>
+								<td><a class="sublink7" href="https://cal-access.sos.ca.gov/Campaign/Candidates/">Candidates 
+										&amp;<br>
 										Elected Officials</a></td>
 							</tr>
 							<tr>
-								<td><IMG height="5" src="/Resources/Images/common/spacer.gif" width="1" border="0"></td>
+								<td><img height="5" src="./122_files/spacer(1).gif" width="1" border="0"></td>
 							</tr>
 							<tr>
-								<td><a class="sublink7" href="/Campaign/Measures/">Propositions 
-										&<br />
+								<td><a class="sublink7" href="https://cal-access.sos.ca.gov/Campaign/Measures/">Propositions 
+										&amp;<br>
 										Ballot Measures</a></td>
 							</tr>
 							<tr>
-								<td><IMG height="5" src="/Resources/Images/common/spacer.gif" width="1" border="0"></td>
+								<td><img height="5" src="./122_files/spacer(1).gif" width="1" border="0"></td>
 							</tr>
 							<tr>
-								<td><a class="sublink7" href="/Campaign/Committees/">Committees, 
-										Parties,<br />
+								<td><a class="sublink7" href="https://cal-access.sos.ca.gov/Campaign/Committees/">Committees, 
+										Parties,<br>
 										Major Donors &amp; Slate Mailers</a></td>
 							</tr>
 							<tr>
-								<td><IMG height="5" src="/Resources/Images/common/spacer.gif" width="1" border="0"></td>
+								<td><img height="5" src="./122_files/spacer(1).gif" width="1" border="0"></td>
 							</tr>
 							<tr>
-								<td><a class="sublink7" href="/Campaign/Other/">Daily/Late/<br />
+								<td><a class="sublink7" href="https://cal-access.sos.ca.gov/Campaign/Other/">Daily/Late/<br>
 										Special Filings</a></td>
 							</tr>
 							<tr>
-								<td><IMG height="5" src="/Resources/Images/common/spacer.gif" width="1" border="0"></td>
+								<td><img height="5" src="./122_files/spacer(1).gif" width="1" border="0"></td>
 							</tr>
-						</table>
+						</tbody></table>
 					</td>
 				</tr>
 				<tr>
-					<td colSpan="2">
-						<img src="/Resources/Images/common/spacer.gif" id="_ctl2_imgSpacer8" height="1" width="1" border="0" /></td>
+					<td colspan="2">
+						<img src="./122_files/spacer(1).gif" id="_ctl2_imgSpacer8" height="1" width="1" border="0"></td>
 				</tr>
 				<tr>
-					<td vAlign="top" colSpan="2">
-						<a href="/Lobbying/">
-							<img src="/Resources/Images/LobbyingActivity_off.gif" id="_ctl2_imgLobbyingActivity" border="0" onMouseOut="this.src='/Resources/Images/LobbyingActivity_off.gif'" onMouseOver="this.src='/Resources/Images/LobbyingActivity_on.gif'" /></a></td>
+					<td valign="top" colspan="2">
+						<a href="https://cal-access.sos.ca.gov/Lobbying/">
+							<img src="./122_files/LobbyingActivity_off.gif" id="_ctl2_imgLobbyingActivity" border="0" onmouseout="this.src=&#39;/Resources/Images/LobbyingActivity_off.gif&#39;" onmouseover="this.src=&#39;/Resources/Images/LobbyingActivity_on.gif&#39;"></a></td>
 				</tr>
 				<tr>
-					<td colSpan="2">
-						<img src="/Resources/Images/common/spacer.gif" id="_ctl2_imgSpacer10" height="1" width="1" border="0" /></td>
+					<td colspan="2">
+						<img src="./122_files/spacer(1).gif" id="_ctl2_imgSpacer10" height="1" width="1" border="0"></td>
 				</tr>
 				<tr>
-					<td vAlign="top" colSpan="2">
-						<a href="/CalAccessResources/">
-							<img src="/Resources/Images/Resources_off.gif" id="_ctl2_imgResources" border="0" onMouseOut="this.src='/Resources/Images/Resources_off.gif'" onMouseOver="this.src='/Resources/Images/Resources_on.gif'" /></td>
+					<td valign="top" colspan="2">
+						<a href="https://cal-access.sos.ca.gov/CalAccessResources/">
+							<img src="./122_files/Resources_off.gif" id="_ctl2_imgResources" border="0" onmouseout="this.src=&#39;/Resources/Images/Resources_off.gif&#39;" onmouseover="this.src=&#39;/Resources/Images/Resources_on.gif&#39;"></a></td>
 				</tr>
 				<tr>
-					<td colSpan="2">
-						<img src="/Resources/Images/common/spacer.gif" id="_ctl2_imgSpacer11" height="1" width="1" border="0" /></td>
+					<td colspan="2">
+						<img src="./122_files/spacer(1).gif" id="_ctl2_imgSpacer11" height="1" width="1" border="0"></td>
 				</tr>
 				<tr>
-					<td vAlign="top" colSpan="2">
-						<a href="http://www.ss.ca.gov/prd/for_filers_only.htm"><img src="/Resources/Images/ForFilersOnly_off.gif" id="_ctl2_imgForFilersOnly" border="0" onMouseOut="this.src='/Resources/Images/ForFilersOnly_off.gif'" onMouseOver="this.src='/Resources/Images/ForFilersOnly_on.gif'" /></a></td>
+					<td valign="top" colspan="2">
+						<a href="http://www.ss.ca.gov/prd/for_filers_only.htm"><img src="./122_files/ForFilersOnly_off.gif" id="_ctl2_imgForFilersOnly" border="0" onmouseout="this.src=&#39;/Resources/Images/ForFilersOnly_off.gif&#39;" onmouseover="this.src=&#39;/Resources/Images/ForFilersOnly_on.gif&#39;"></a></td>
 				</tr>
 				<tr>
-					<td colSpan="2">
-						<img src="/Resources/Images/common/spacer.gif" id="_ctl2_imgSpacer9" height="1" width="1" border="0" /></td>
+					<td colspan="2">
+						<img src="./122_files/spacer(1).gif" id="_ctl2_imgSpacer9" height="1" width="1" border="0"></td>
 				</tr>
 				<tr>
-					<td vAlign="top" colSpan="2">
-						<A HREF="/Misc/OffSite.aspx?id=SSPRD">
-							<img src="/Resources/Images/PoliticalReform_off.gif" id="_ctl2_imgPoliticalReform" border="0" onMouseOut="this.src='/Resources/Images/PoliticalReform_off.gif'" onMouseOver="this.src='/Resources/Images/PoliticalReform_on.gif'" /></A></td>
+					<td valign="top" colspan="2">
+						<a href="https://cal-access.sos.ca.gov/Misc/OffSite.aspx?id=SSPRD">
+							<img src="./122_files/PoliticalReform_off.gif" id="_ctl2_imgPoliticalReform" border="0" onmouseout="this.src=&#39;/Resources/Images/PoliticalReform_off.gif&#39;" onmouseover="this.src=&#39;/Resources/Images/PoliticalReform_on.gif&#39;"></a></td>
 				</tr>
 				<tr>
-					<td colSpan="2"><img src="/Resources/Images/common/spacer.gif" id="_ctl2_imgSpacer12" height="1" width="1" border="0" /></td>
+					<td colspan="2"><img src="./122_files/spacer(1).gif" id="_ctl2_imgSpacer12" height="1" width="1" border="0"></td>
 				</tr>
 				<tr>
-					<td vAlign="top" colSpan="2"><A 
-href="/Misc/OffSite.aspx?id=USERMANUAL"
-><img src="/Resources/Images/UserManual_off.gif" id="_ctl2_imgUserManual" alt="Link to the User's Manual" border="0" onMouseOut="this.src='/Resources/Images/UserManual_off.gif'" onMouseOver="this.src='/Resources/Images/UserManual_on.gif'" /></A></td>
+					<td valign="top" colspan="2"><a href="https://cal-access.sos.ca.gov/Misc/OffSite.aspx?id=USERMANUAL"><img src="./122_files/UserManual_off.gif" id="_ctl2_imgUserManual" alt="Link to the User&#39;s Manual" border="0" onmouseout="this.src=&#39;/Resources/Images/UserManual_off.gif&#39;" onmouseover="this.src=&#39;/Resources/Images/UserManual_on.gif&#39;"></a></td>
 				</tr>
-			</table>
+			</tbody></table>
 		</td>
 		<td colspan="2" valign="top" width="644">
-			<img src="/Resources/Images/cal_access_banner.jpg" id="_ctl2_imgCalAccessBanner" border="0" width="644" /></td>
+			<img src="./122_files/cal_access_banner.jpg" id="_ctl2_imgCalAccessBanner" border="0" width="644"></td>
 	</tr>
 	<tr>
 		<!-- spacer lane here -->
 		<td width="30" valign="top">
-			<img src="/Resources/Images/common/spacer.gif" border="0" width="30" height="50">
+			<img src="./122_files/spacer(1).gif" border="0" width="30" height="50">
 		</td>
 		<td width="614" valign="top">
 <!-- content cell table starts here -->
@@ -263,71 +400,737 @@ Elected Officials</span>
 <br>
 
 <table>
-	<TR>
-		<TD width="50%">
+	<tbody><tr>
+		<td width="50%">
 			<!--Added the span tag to indent the text for SR C43D171524 -->
-			<span id="view" class="hdr12">Choose a Listing:</span><br />
-<a href="/Campaign/Candidates/list.aspx?view=certified"><img border="0" align="absmiddle" src="/Resources/Images/selected.gif" alt="Selected" border="2" /></a><span class="txt5">&nbsp;&nbsp;Certified Election Candidates</span><br />
-<a href="/Campaign/Candidates/list.aspx?view=incumbent"><img border="0" align="absmiddle" src="/Resources/Images/unselected.gif" alt="Not Selected" border="2" /></a><span class="txt5">&nbsp;&nbsp;Incumbent Elected State Officials</span><br />
-<a href="/Campaign/Candidates/list.aspx?view=name"><img border="0" align="absmiddle" src="/Resources/Images/unselected.gif" alt="Not Selected" border="2" /></a><span class="txt5">&nbsp;&nbsp;Candidates and Elected Officials By Name</span><br />
-<a href="/Campaign/Candidates/list.aspx?view=intention"><img border="0" align="absmiddle" src="/Resources/Images/unselected.gif" alt="Not Selected" border="2" /></a><span class="txt5">&nbsp;&nbsp;Who filed a Statement of Intention to run for What State Office? (Filers may not have qualified for the ballot)</span><br />
-<a href="/Campaign/Candidates/list.aspx?view=f900"><img border="0" align="absmiddle" src="/Resources/Images/unselected.gif" alt="Not Selected" border="2" /></a><span class="txt5">&nbsp;&nbsp;CalPERS and CalSTRS Candidate Filings, Scanned Images</span><br />
+			<span id="view" class="hdr12">Choose a Listing:</span><br>
+<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified"><img border="0" align="absmiddle" src="./122_files/selected.gif" alt="Selected"></a><span class="txt5">&nbsp;&nbsp;Certified Election Candidates</span><br>
+<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=incumbent"><img border="0" align="absmiddle" src="./122_files/unselected.gif" alt="Not Selected"></a><span class="txt5">&nbsp;&nbsp;Incumbent Elected State Officials</span><br>
+<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=name"><img border="0" align="absmiddle" src="./122_files/unselected.gif" alt="Not Selected"></a><span class="txt5">&nbsp;&nbsp;Candidates and Elected Officials By Name</span><br>
+<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=intention"><img border="0" align="absmiddle" src="./122_files/unselected.gif" alt="Not Selected"></a><span class="txt5">&nbsp;&nbsp;Who filed a Statement of Intention to run for What State Office? (Filers may not have qualified for the ballot)</span><br>
+<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=f900"><img border="0" align="absmiddle" src="./122_files/unselected.gif" alt="Not Selected"></a><span class="txt5">&nbsp;&nbsp;CalPERS and CalSTRS Candidate Filings, Scanned Images</span><br>
 
 			<br>
-		</TD>
-		<TD vAlign="top" width="50%">
-<TABLE class="txt5" id="Table1" cellSpacing="1" cellPadding="1" width="300" border="0">
-	<tr>
-		<DIV class="hdr12" style="DISPLAY: inline; WIDTH: 240px; HEIGHT: 19px" ms_positioning="FlowLayout">Go 
-			to Section:</DIV>
+		</td>
+		<td valign="top" width="50%">
+<div class="hdr12" style="DISPLAY: inline; WIDTH: 240px; HEIGHT: 19px" ms_positioning="FlowLayout">Go 
+			to Section:</div><table class="txt5" id="Table1" cellspacing="1" cellpadding="1" width="300" border="0">
+	<tbody><tr>
+		
 	</tr>
-	<TR>
-		<TD style="WIDTH: 11px"></TD>
-		<TD><IMG src="../../Resources/Images/arrow.gif"> <A href="#statewide" class="sublink4">Statewide Candidates</A></TD>
-	</TR>
-	<TR>
-		<TD style="WIDTH: 11px"></TD>
-		<TD><IMG src="../../Resources/Images/arrow.gif">&#32;<A href="#senate" class="sublink4">State Senate Candidates</A></TD>
-	</TR>
-	<TR>
-		<TD style="WIDTH: 11px"></TD>
-		<TD><IMG src="../../Resources/Images/arrow.gif">&#32;<A href="#assembly" class="sublink4">State Assembly Candidates</A></TD>
-	</TR>
-</TABLE>
-</TD>
-	</TR>
-</table>
-<br>
-<span class="hdr12">Choose an Election:</span><br />
-<a href="/Campaign/Candidates/list.aspx?view=certified&amp;electNav=122"><img border="0" align="absmiddle" src="/Resources/Images/selected.gif" border="2" /></a><span class="txt5">2022 PRIMARY</span><br />
-<a href="/Campaign/Candidates/list.aspx?view=certified&amp;electNav=170"><img border="0" align="absmiddle" src="/Resources/Images/unselected.gif" border="2" /></a><span class="txt5">2021 SPECIAL ELECTION (ASSEMBLY 54)</span><br />
-<a href="/Campaign/Candidates/list.aspx?view=certified&amp;electNav=168"><img border="0" align="absmiddle" src="/Resources/Images/unselected.gif" border="2" /></a><span class="txt5">Prior Elections</span><br />
-
-<br />
-<table cellpadding="8" cellspacing="0" border="3" bordercolor="#3149AA" width="100%">
 	<tr>
+		<td style="WIDTH: 11px"></td>
+		<td><img src="./122_files/arrow.gif"> <a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=122#statewide" class="sublink4">Statewide Candidates</a></td>
+	</tr>
+	<tr>
+		<td style="WIDTH: 11px"></td>
+		<td><img src="./122_files/arrow.gif"> <a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=122#senate" class="sublink4">State Senate Candidates</a></td>
+	</tr>
+	<tr>
+		<td style="WIDTH: 11px"></td>
+		<td><img src="./122_files/arrow.gif"> <a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=122#assembly" class="sublink4">State Assembly Candidates</a></td>
+	</tr>
+</tbody></table>
+</td>
+	</tr>
+</tbody></table>
+<br>
+<span class="hdr12">Choose an Election:</span><br>
+<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=123"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2022 GENERAL</span><br>
+<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=122"><img border="0" align="absmiddle" src="./122_files/selected.gif"></a><span class="txt5">Prior Elections</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=122"><img border="0" align="absmiddle" src="./122_files/selected.gif"></a><span class="txt5">2022 PRIMARY</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=179"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2022 SPECIAL ELECTION (ASSEMBLY 11)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=181"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2022 SPECIAL ELECTION (ASSEMBLY 80)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=183"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2022 SPECIAL ELECTION (ASSEMBLY 62)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=175"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2022 SPECIAL ELECTION (ASSEMBLY 17)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=177"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2022 SPECIAL ELECTION (ASSEMBLY 49)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=172"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2021 SPECIAL ELECTION (GOVERNOR)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=173"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2021 SPECIAL ELECTION (ASSEMBLY 18)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=170"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2021 SPECIAL ELECTION (ASSEMBLY 54)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=168"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2021 SPECIAL ELECTION (ASSEMBLY 79)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=164"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2021 SPECIAL ELECTION (STATE SENATE 30)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=71"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2020 GENERAL</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=161"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2020 SPECIAL RUNOFF (STATE SENATE 28)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=70"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2020 PRIMARY</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=160"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2020 SPECIAL ELECTION (STATE SENATE 28)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=157"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2019 SPECIAL RUNOFF (ASSEMBLY 01)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=156"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2019 SPECIAL ELECTION (ASSEMBLY 01)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=154"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2019 SPECIAL RUNOFF (STATE SENATE 01)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=155"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2019 SPECIAL RUNOFF (STATE SENATE 33)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=145"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2019 SPECIAL ELECTION (STATE SENATE 01)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=146"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2019 SPECIAL ELECTION (STATE SENATE 33)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=63"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2018 GENERAL</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=144"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2018 SPECIAL RUNOFF (STATE SENATE 32)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=62"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2018 PRIMARY</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=141"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2018 SPECIAL ELECTION (STATE SENATE 32)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=139"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2018 SPECIAL ELECTION (STATE SENATE 29)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=134"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2018 SPECIAL RUNOFF (ASSEMBLY 39)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=143"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2018 SPECIAL RUNOFF (ASSEMBLY 45)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=133"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2018 SPECIAL ELECTION (ASSEMBLY 39)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=138"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2018 SPECIAL ELECTION (ASSEMBLY 54)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=140"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2018 SPECIAL ELECTION (ASSEMBLY 45)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=132"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2017 SPECIAL RUNOFF (ASSEMBLY 51)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=127"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2017 SPECIAL ELECTION (ASSEMBLY 51)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=65"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2016 GENERAL</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=64"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2016 PRIMARY</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=106"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2016 SPECIAL ELECTION (ASSEMBLY 31)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=101"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2015 SPECIAL RUNOFF (STATE SENATE 07)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=100"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2015 SPECIAL ELECTION (STATE SENATE 37)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=97"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2015 SPECIAL ELECTION (STATE SENATE 07)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=99"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2015 SPECIAL ELECTION (STATE SENATE 21)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=93"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2014 SPECIAL ELECTION (STATE SENATE 35)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=41"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2014 GENERAL</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=40"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2014 PRIMARY</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=89"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2014 SPECIAL ELECTION (STATE SENATE 23)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=88"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2013 SPECIAL ELECTION (ASSEMBLY 54)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=85"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2013 SPECIAL RUNOFF (ASSEMBLY 45)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=83"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2013 SPECIAL RUNOFF (ASSEMBLY 52)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=84"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2013 SPECIAL ELECTION (ASSEMBLY 45)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=86"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2013 SPECIAL ELECTION (STATE SENATE 26)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=82"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2013 SPECIAL ELECTION (ASSEMBLY 52)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=77"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2013 SPECIAL RUNOFF (STATE SENATE 16)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=78"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2013 SPECIAL ELECTION (ASSEMBLY 80)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=76"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2013 SPECIAL ELECTION (STATE SENATE 16)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=80"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2013 SPECIAL RUNOFF (STATE SENATE 32)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=74"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2013 SPECIAL ELECTION (STATE SENATE 40)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=75"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2013 SPECIAL ELECTION (STATE SENATE 32)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=73"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2013 SPECIAL ELECTION (STATE SENATE 04)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=26"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2012 GENERAL</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=72"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2012 SPECIAL ELECTION (STATE SENATE 04)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=25"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2012 PRIMARY</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=69"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2011 SPECIAL RUNOFF (ASSEMBLY 04)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=68"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2011 SPECIAL ELECTION (ASSEMBLY 04)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=59"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2011 SPECIAL ELECTION (STATE SENATE 28)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=61"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2011 SPECIAL ELECTION (STATE SENATE 17)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=56"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2011 SPECIAL RUNOFF (STATE SENATE 01)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=21"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2010 GENERAL</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=55"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2010 SPECIAL ELECTION (STATE SENATE 01)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=54"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2010 SPECIAL RUNOFF (STATE SENATE 15)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=53"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2010 SPECIAL ELECTION (STATE SENATE 15)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=22"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2010 PRIMARY</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=51"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2010 SPECIAL RUNOFF (STATE SENATE 37)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=52"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2010 SPECIAL RUNOFF (ASSEMBLY 43)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=49"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2010 SPECIAL ELECTION (ASSEMBLY 43)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=48"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2010 SPECIAL ELECTION (STATE SENATE 37)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=47"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2010 SPECIAL RUNOFF (ASSEMBLY 72)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=46"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2009 SPECIAL ELECTION (ASSEMBLY 72)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=45"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2009 SPECIAL ELECTION (ASSEMBLY 51)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=44"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2009 SPECIAL RUNOFF (STATE SENATE 26)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=42"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2009 SPECIAL ELECTION (STATE SENATE 26)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=16"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2008 GENERAL</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=15"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2008 PRIMARY</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=38"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2008 RECALL (STATE SENATE 12)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=37"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2008 SPECIAL RUNOFF (ASSEMBLY 55)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=32"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2007 SPECIAL ELECTION (ASSEMBLY 55)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=28"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2007 SPECIAL ELECTION (ASSEMBLY 39)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=8"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2006 GENERAL</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=7"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2006 PRIMARY</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=27"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2006 SPECIAL RUNOFF (STATE SENATE 35)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=24"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2006 SPECIAL ELECTION (STATE SENATE 35)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=19"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2005 SPECIAL ELECTION (ASSEMBLY 53)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=6"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2004 GENERAL</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=5"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2004 PRIMARY</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=14"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2003 SPECIAL ELECTION (GOVERNOR)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=4"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2002 GENERAL</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=3"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2002 PRIMARY</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=13"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2001 SPECIAL ELECTION (ASSEMBLY 49)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=11"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2001 SPECIAL RUNOFF (ASSEMBLY 65)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=39"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2001 SPECIAL ELECTION (STATE SENATE 24)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=10"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2001 SPECIAL ELECTION (ASSEMBLY 65)</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=2"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2000 GENERAL</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&amp;electNav=1"><img border="0" align="absmiddle" src="./122_files/unselected.gif"></a><span class="txt5">2000 PRIMARY</span><br>
+
+<br>
+<table cellpadding="8" cellspacing="0" border="3" bordercolor="#3149AA" width="100%">
+	<tbody><tr>
 		<td><span class="hdr13">Also check Late Contribution filings. These reports are independent of the comprehensive disclosure reports that are linked here until semi-annual filings are submitted.</span></td>
 	</tr>
-</table>
-<br />
+</tbody></table>
+<br>
 
-<a name="statewide"></a>
-<a name="board"></a>
-<a name="senate"></a>
+<a name="statewide"><table cellspacing="0" cellpadding="4" border="3" bordercolor="#3149AA" bgcolor="#7183C6" width="100%">
+	<tbody><tr>
+		<td colspan="2" valign="top"><span class="hdr14">STATEWIDE OFFICES</span></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">GOVERNOR </span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><span class="txt7">ANDERSON, RONALD A.</span><br><span class="txt7">BHANGOO, GURINDER S</span><br><span class="txt7">COLLINS, HEATHER</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444815" class="sublink2">COLLINS, SHAWN<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1224716" class="sublink2">DAHLE, BRIAN<br></a><span class="txt7">FANARA, ANTHONY L.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444990" class="sublink2">FIANKAN, SERGE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1437888" class="sublink2">HANINK, JAMES G<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1446241" class="sublink2">JONES, RONALD E.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1437390" class="sublink2">LE ROUX, JENNY RAE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1439588" class="sublink2">LOZANO, DAVID<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1433524" class="sublink2">MERCURI, DANIEL R.<br></a><span class="txt7">MORALES, CRISTIAN R.</span><br><span class="txt7">NEWMAN II, ROBERT C.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1308192" class="sublink2">NEWSOM, GAVIN<br></a><span class="txt7">PEREZ-SERRATO, ARMANDO</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1362131" class="sublink2">RODRIGUEZ, LUIS J.<br></a><span class="txt7">SANDERS III, WOODROW</span><br><span class="txt7">SCHULTZ, FREDERIC C.</span><br><span class="txt7">SCOTT, JEFF</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1440364" class="sublink2">SENUM, REINETTE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1400693" class="sublink2">SHELLENBERGER, MICHAEL D.<br></a><span class="txt7">SORTOR, LONNIE L.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1438195" class="sublink2">TRIMINO, ANTHONY D<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1438221" class="sublink2">VENTRESCA, JOEL A.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1427915" class="sublink2">WILLIAMS, MAJOR<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1439063" class="sublink2">ZACKY, LEO S.<br></a><span class="txt7">ZINK, WILLIAM B.</span><br></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">LIEUTENANT GOVERNOR </span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><span class="txt7">ARIF, MOHAMMAD</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1364124" class="sublink2">FENNELL, DAVID D.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1439404" class="sublink2">HILLBERG, DAVID A.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1395992" class="sublink2">KOUNALAKIS, ELENI<br></a><span class="txt7">MORGAN, JEFFREY HIGHBEAR</span><br><span class="txt7">OGLE, JAMES O.</span><br><span class="txt7">SAACKE, WILLIAM C.</span><br><span class="txt7">SAUNDERS, CLINT W.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1446023" class="sublink2">UNDERWOOD JACOBS, ANGELA E.<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">SECRETARY OF STATE </span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1322746" class="sublink2">BERNOSKY, ROBERT E.<br></a><span class="txt7">BLENNER, GARY N.</span><br><span class="txt7">CINQUANTA, MATTHEW D.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1438314" class="sublink2">HAMM, RACHEL<br></a><span class="txt7">PAINE, JAMES W.</span><br><span class="txt7">RODRIGUEZ JR., RAUL</span><br><span class="txt7">SILVEIRA, DESMOND A.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1342820" class="sublink2">WEBER, SHIRLEY<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">CONTROLLER </span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1439263" class="sublink2">CHEN, LANHEE J.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1393661" class="sublink2">COHEN, MALIA M.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1427912" class="sublink2">GALPERIN, RON<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1355210" class="sublink2">GLAZER, STEVEN<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1241454" class="sublink2">WELLS, LAURA<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1437046" class="sublink2">YIU, YVONNE<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">TREASURER </span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><span class="txt7">ADAMS, MEGHANN L</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1445778" class="sublink2">DO, ANDREW<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1346411" class="sublink2">GUERRERO, JACK M.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1261661" class="sublink2">MA, FIONA<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ATTORNEY GENERAL </span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1339733" class="sublink2">BONTA, ROB<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1399108" class="sublink2">EARLY, ERIC P.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1437937" class="sublink2">HOCHMAN, NATHAN<br></a><span class="txt7">KAPELOVITZ, DAN</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1320959" class="sublink2">SCHUBERT, ANNE MARIE<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">SUPERINTENDENT OF PUBLIC INSTRUCTION </span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1437504" class="sublink2">AMARAL, MARCO<br></a><span class="txt7">CAMPBELL, JOSEPH GUY</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1446111" class="sublink2">CHRISTENSEN, LANCE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1254184" class="sublink2">GIBSON, JAMES E.<br></a><span class="txt7">LONG, AINYE E.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1295704" class="sublink2">THURMOND, TONY<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1325753" class="sublink2">YANG, GEORGE<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">INSURANCE COMMISSIONER </span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1439418" class="sublink2">ALLEN, VINSON EUGENE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1325714" class="sublink2">CONLON, GREG<br></a><span class="txt7">FIMBRES, VERONIKA</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1423583" class="sublink2">HOWELL, ROBERT P.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1363514" class="sublink2">HRIZI, NATHALIE<br></a><span class="txt7">JACKSON, JASPER J.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1304215" class="sublink2">LARA, RICARDO<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1338897" class="sublink2">LEVINE, MARC<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1445287" class="sublink2">MOLNAR, ROBERT J.<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr>
+</tbody></table><br></a>
+<a name="board"><table cellspacing="0" cellpadding="4" border="3" bordercolor="#3149AA" bgcolor="#7183C6" width="100%">
+	<tbody><tr>
+		<td colspan="2" valign="top"><span class="hdr14">BOARD OF EQUALIZATION</span></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">MEMBER BOARD OF EQUALIZATION 01</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444893" class="sublink2">ALTAMIRANO, JOSE S.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1265444" class="sublink2">GAINES, EDWARD MOORE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1437208" class="sublink2">MURPHY, BRADEN D<br></a><span class="txt7">SHAHATIT, NADER F</span><br></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">MEMBER BOARD OF EQUALIZATION 02</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1005473" class="sublink2">ALIOTO-PIER, MICHELA<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1231723" class="sublink2">LIEBER, SALLY<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444136" class="sublink2">VERBICA, PETER C.<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">MEMBER BOARD OF EQUALIZATION 03</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><span class="txt7">MANVEL, YANA M.</span><br><span class="txt7">MARSHALL, GLENN R.</span><br><span class="txt7">MENDOZA, JOHN</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1005783" class="sublink2">VAZQUEZ, ANTONIO<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">MEMBER BOARD OF EQUALIZATION 04</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1226740" class="sublink2">BILODEAU, DENIS R.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1401603" class="sublink2">DODSON, DAVID B.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1440016" class="sublink2">ECONOMY, RANDELL R.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1341264" class="sublink2">HARPER, MATTHEW<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1003675" class="sublink2">KELLY, JOHN F<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1439831" class="sublink2">PETERSON, ERIK<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1402442" class="sublink2">SCHAEFER, J. MICHAEL<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr>
+</tbody></table><br></a>
+<a name="senate"><table cellspacing="0" cellpadding="4" border="3" bordercolor="#3149AA" bgcolor="#7183C6" width="100%">
+	<tbody><tr>
+		<td colspan="2" valign="top"><span class="hdr14">SENATE DISTRICTS</span></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">STATE SENATE 02</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1361301" class="sublink2">MC GUIRE, MIKE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1436099" class="sublink2">YOON, GINSU 'GENE'<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">STATE SENATE 04</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444600" class="sublink2">ALVARADO-GIL, MARIE I.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1299775" class="sublink2">BAILEY, STEVEN<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444133" class="sublink2">DALY, JOLENE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444088" class="sublink2">GORDON, MICHAEL<br></a><span class="txt7">GRIFFITH, JACK A.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443736" class="sublink2">MC KAY, JEFFREY D.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1445212" class="sublink2">RADANOVICH, GEORGE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444256" class="sublink2">ROBERTSON, TIMOTHY W.<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">STATE SENATE 06</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1445779" class="sublink2">HUANG, MICHAEL J.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1251659" class="sublink2">NIELLO, ROGER<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1442518" class="sublink2">VILLESCAZ, PAULA<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">STATE SENATE 08</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1425663" class="sublink2">ASHBY, ANGELIQUE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1438899" class="sublink2">GARCIA JR., RAFAEL<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1224542" class="sublink2">JONES, DAVE<br></a><span class="txt7">MASON, SUSAN</span><br></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">STATE SENATE 10</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1418794" class="sublink2">CANOVA, JIM (JAMES D.)<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1438355" class="sublink2">KHAN, JAMAL H.<br></a><span class="txt7">LIU, RAYMOND</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1437738" class="sublink2">MEI, LILY<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1422316" class="sublink2">PIMENTEL, PAUL J.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1438304" class="sublink2">WAHAB, AISHA<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">STATE SENATE 12</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1325437" class="sublink2">GROVE, SHANNON<br></a><span class="txt7">GUNDY, SUSANNE</span><br></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">STATE SENATE 14</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1282323" class="sublink2">CABALLERO, ANNA<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1356609" class="sublink2">MIRANDA, PAULINA M.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1445742" class="sublink2">SHOR, AMNON<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">STATE SENATE 16</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1401463" class="sublink2">HURTADO, MELISSA<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444730" class="sublink2">OSORIO, BRYAN<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1234191" class="sublink2">PARRA, NICOLE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444819" class="sublink2">SHEPARD, DAVID E<br></a><span class="txt7">TATUM, GREGORY</span><br></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">STATE SENATE 18</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><span class="txt7">GALICIA, ALEJANDRO</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1005698" class="sublink2">PADILLA, STEVE<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">STATE SENATE 20</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><span class="txt7">AYAO, ELY DE LA CRUZ</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1440458" class="sublink2">HERTZBERG, DANIEL<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1440304" class="sublink2">MENJIVAR, CAROLINE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444670" class="sublink2">MORALES, SEYDI ALEJANDRA<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">STATE SENATE 22</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><span class="txt7">MATEO, KIMO</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1392891" class="sublink2">RUBIO, SUSAN<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1445902" class="sublink2">TSAI, VINCENT<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">STATE SENATE 24</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1363828" class="sublink2">ALLEN, BEN<br></a><span class="txt7">DUTERTE, EDWIN P</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1446116" class="sublink2">IRWIN, KRISTINA<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">STATE SENATE 26</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1447968" class="sublink2">AGRAZ, CLAUDIA<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1395750" class="sublink2">DURAZO, MARIA ELENA<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">STATE SENATE 28</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><span class="txt7">GULLEDGE, JAMAAL A.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1435524" class="sublink2">LISUZZO, JOSEPH<br></a><span class="txt7">MOORE, KAMILAH VICTORIA</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444197" class="sublink2">SMALLWOOD-CUEVAS, LOLA<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1398111" class="sublink2">TURNER, CHERYL C.<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">STATE SENATE 30</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1402932" class="sublink2">ARCHULETA, BOB<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1422924" class="sublink2">BOUCHOT, HENRY<br></a><span class="txt7">CAMACHO RODRIGUEZ, MARTHA</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1446218" class="sublink2">CLEMMONS, MITCH<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">STATE SENATE 32</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><span class="txt7">NASH, BRIAN</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1423436" class="sublink2">SEYARTO, KELLY<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">STATE SENATE 34</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1445900" class="sublink2">SHADER, RHONDA<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1241318" class="sublink2">UMBERG, THOMAS J.<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">STATE SENATE 36</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443735" class="sublink2">CARR, KIM<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1282277" class="sublink2">NGUYEN, JANET<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">STATE SENATE 38</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1436942" class="sublink2">BLAKESPEAR, CATHERINE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1441368" class="sublink2">GUNDERSON, MATTHEW<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443825" class="sublink2">KERR, JOE<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">STATE SENATE 40</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1319720" class="sublink2">JONES, BRIAN W.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443296" class="sublink2">ROCHA, JOSEPH<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr>
+</tbody></table><br></a>
 <a name="assembly"><table cellspacing="0" cellpadding="4" border="3" bordercolor="#3149AA" bgcolor="#7183C6" width="100%">
-	<tr>
+	<tbody><tr>
 		<td colspan="2" valign="top"><span class="hdr14">ASSEMBLY DISTRICTS</span></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 01</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?id=1419170" class="sublink2">BETANCOURT, ELIZABETH<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 01</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><span class="txt7">BROWN, JOSHUA D.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1419120" class="sublink2">DAHLE, MEGAN<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1445947" class="sublink2">SANDWITH, BELLE STARR<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1436048" class="sublink2">TANNER, KELLY WILLETT<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 02</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1344995" class="sublink2">SVOLOS, CHARLOTTE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1353393" class="sublink2">WOOD, JIM<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 03</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1357069" class="sublink2">GALLAGHER, JAMES<br></a><span class="txt7">HOSTON, JEANENNE H.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1445922" class="sublink2">ZINK, DAVID LEON<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 04</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1379566" class="sublink2">AGUIAR-CURRY, CECILIA<br></a><span class="txt7">PELICAN, SUSAN</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1436100" class="sublink2">PRITCHARD, BRYAN T.<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 05</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1402711" class="sublink2">CHENOWETH, REBECCA L.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1436408" class="sublink2">PALETTA, JASON<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443377" class="sublink2">PATTERSON, JOE<br></a><span class="txt7">SMITH, GREG S.</span><br></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 06</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><span class="txt7">BONSER, JANICE M.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1421063" class="sublink2">COOK, CATHERINE M.<br></a><span class="txt7">MARQUES, ROBERT "BOB" C.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1314046" class="sublink2">MC CARTY, KEVIN<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1001522" class="sublink2">PANE, JOSH<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 07</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1240640" class="sublink2">COOLEY, KEN<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1442522" class="sublink2">HOOVER, JOSH<br></a><span class="txt7">LEVESQUE, QUINTIN TOSHI</span><br><span class="txt7">PERRINE, JEFFREY E.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444616" class="sublink2">RIEHLE, RAYMOND A.<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 08</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1367561" class="sublink2">NICHOLS, THOMAS E<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1346007" class="sublink2">PATTERSON, JIM<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 09</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1376113" class="sublink2">FLORA, HEATH<br></a><span class="txt7">TAHIRKHELI, MUSHTAQ A.</span><br></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 10</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1435029" class="sublink2">GUERRA, ERIC<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443491" class="sublink2">NGUYEN, STEPHANIE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1431102" class="sublink2">PORTER, TECOY<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1422973" class="sublink2">RIGARD, ERIC<br></a><span class="txt7">THOMPKINS, BENNIE</span><br></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 11</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><span class="txt7">BERG, JAMES</span><br><span class="txt7">CALLISON, JENNY L.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1442764" class="sublink2">WILSON, LORI<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 12</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1441828" class="sublink2">AMINZADEH, SARA<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1275505" class="sublink2">CONNOLLY, DAMON<br></a><span class="txt7">PODSHADLEY, ANDREW ALAN</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1442782" class="sublink2">SCHWARTZ, STEVE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443618" class="sublink2">TIMES-GREEN, IDA<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 13</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1436765" class="sublink2">BEDOLLA, MATEO M.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1446041" class="sublink2">VARGAS, VERONICA<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1402100" class="sublink2">VILLAPUDUA, CARLOS<br></a><span class="txt7">WAGNER, JESSICA</span><br></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 14</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1361120" class="sublink2">KINNEY, RICHARD<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1396735" class="sublink2">WICKS, BUFFY<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 15</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1376434" class="sublink2">GRAYSON, TIM<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1423584" class="sublink2">PROCTOR, JANELL<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 16</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1398720" class="sublink2">BAUER-KAHAN, REBECCA<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1299399" class="sublink2">RUBAY, JOSEPH A.<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 17</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1359299" class="sublink2">CAMPOS, DAVID F.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1441331" class="sublink2">HANEY, MATT<br></a><span class="txt7">SHIREMAN, WILLIAM K.</span><br></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 18</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1437588" class="sublink2">BONTA, MIA<br></a><span class="txt7">PECHENUK, MINDY</span><br></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 19</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1343138" class="sublink2">TING, PHIL<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1446388" class="sublink2">WEIDE, KARSTEN<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 20</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1439212" class="sublink2">ESTEEN, JENNIFER<br></a><span class="txt7">GRCAR, JOSEPH</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443290" class="sublink2">KUMAGAI, SHAWN<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443073" class="sublink2">ORTEGA-TORO, LIZ<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 21</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1442695" class="sublink2">COLEMAN, JAMES HSUCHEN<br></a><span class="txt7">GILHAM, MARK</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1445040" class="sublink2">GOODMAN, MAURICE D.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1442841" class="sublink2">HALE, GISELLE<br></a><span class="txt7">MADDEN, ALISON</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1441731" class="sublink2">PAPAN, DIANE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443343" class="sublink2">SOLE, TANIA<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 22</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444895" class="sublink2">ALANIS, JUAN<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1425326" class="sublink2">CAMPOS, JOEL G.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444803" class="sublink2">CONDIT, CHAD<br></a><span class="txt7">SALAZAR, GUADALUPE 'LUPITA'</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1442979" class="sublink2">SELF, JESSICA S.<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 23</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1317907" class="sublink2">BERMAN, MARC E.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443623" class="sublink2">DEC, TIM<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 24</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1363959" class="sublink2">BRUNTON, ROBERT L.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1356482" class="sublink2">CHU, KANSEN<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443692" class="sublink2">DIEP, LAN<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1440039" class="sublink2">KENG, TERESA C.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1418918" class="sublink2">LEE, ALEX T.<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 25</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1372978" class="sublink2">KALRA, ASH<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443276" class="sublink2">STROLL, THEODORE J.<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 26</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1364380" class="sublink2">GORSULOWSKY, TIM S.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1442698" class="sublink2">JIAO, LONG<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1335519" class="sublink2">LOW, EVAN<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 27</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1446470" class="sublink2">FLEMING, AMANDA<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444728" class="sublink2">KARBASSI, KIA M.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1445288" class="sublink2">PAZIN, MARK N.<br></a><span class="txt7">PELLISSIER, RANDALL COREY</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443827" class="sublink2">SORIA, ESMERALDA<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 28</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443625" class="sublink2">LAWLER, LIZ<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443590" class="sublink2">PELLERIN, GAIL<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1446386" class="sublink2">RENNIE, ROBERT L.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1446403" class="sublink2">THOMPSON, JOSEPH M.<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 29</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><span class="txt7">CASTRO, STEPHANIE L.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1399487" class="sublink2">RIVAS, ROBERT<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 30</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1422315" class="sublink2">ADDIS, DAWN J.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443824" class="sublink2">CARTER, ZOE<br></a><span class="txt7">DRAKE, JOHN R.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1402147" class="sublink2">NOHRDEN, VICKI L.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1442930" class="sublink2">WIZARD, JON<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 31</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1377114" class="sublink2">ARAMBULA, JOAQUIN<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1446552" class="sublink2">CALANDRA, DOLCE M.<br></a><span class="txt7">MENDOZA, JOHN C.</span><br><span class="txt7">VERHINES, ANDREW W.</span><br></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 32</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1381906" class="sublink2">FONG, VINCENT<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 33</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1362534" class="sublink2">MACARENO, RUBEN<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1365277" class="sublink2">MATHIS, DEVON J.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1398491" class="sublink2">SIGALA, JOSE<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 34</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1445663" class="sublink2">FOURNIER, PAUL<br></a><span class="txt7">KAHLON, RAJ</span><br><span class="txt7">LA PLANTE, ROGER A.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1345765" class="sublink2">LACKEY, THOMAS W.<br></a><span class="txt7">RAMIREZ-DEAN, RITA</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1421298" class="sublink2">SMITH, THURSTON<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 35</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1442537" class="sublink2">BAINS, JASMEET<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1356259" class="sublink2">PEREZ, LETICIA<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 36</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1355371" class="sublink2">GARCIA, EDUARDO<br></a><span class="txt7">WARE, MARLON G.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1446265" class="sublink2">WEEKS, IAN MICHAEL<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 37</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1236378" class="sublink2">HART, GREGG A,<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1319188" class="sublink2">STOKER, MIKE<br></a><span class="txt7">WALLACH, BRUCE J.</span><br></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 38</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1422869" class="sublink2">BENNETT, STEPHEN A.<br></a><span class="txt7">BROCATO, COLE C.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1442874" class="sublink2">WILSON, DANIEL L.<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 39</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443302" class="sublink2">CARRILLO, JUAN<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1297103" class="sublink2">FOX, STEVE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1446402" class="sublink2">MARSH, PAUL A.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1439410" class="sublink2">ROSENTHAL, ANDREA<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 40</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1422868" class="sublink2">CHO, ANNIE E.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1438354" class="sublink2">SCHIAVO, PILAR<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1420939" class="sublink2">VALLADARES, SUZETTE M.<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 41</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1336467" class="sublink2">HOLDEN, CHRIS<br></a><span class="txt7">MC MAHON, MICHAEL B.</span><br></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 42</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1362509" class="sublink2">IRWIN, JACQUI V.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1445650" class="sublink2">MILLS, LORI<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1445588" class="sublink2">NORDBLUM, THEODORE KENNETH<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 43</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444992" class="sublink2">MASSAQUOI, SIAKA<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1401108" class="sublink2">RIVAS, LUZ<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 44</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1368701" class="sublink2">FRIEDMAN, LAURA<br></a><span class="txt7">JACOBSEN, BARRY CURTIS</span><br></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 45</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><span class="txt7">MARTINEZ, JOSEPH W.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1401776" class="sublink2">RAMOS, JAMES<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 46</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><span class="txt7">CARUSO, DANA FRANCES</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1400730" class="sublink2">GABRIEL, JESSE<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 47</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1439906" class="sublink2">HOLSTEGE, CHRISTY<br></a><span class="txt7">MICHAELS, GARY J.</span><br><span class="txt7">SWAIN, JAMIE L</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443695" class="sublink2">WALLIS, GREG<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 48</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><span class="txt7">MAYE, RYAN</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1374663" class="sublink2">RUBIO, BLANCA<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 49</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1399467" class="sublink2">BRINK, BURTON<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1398074" class="sublink2">FONG, MICHAEL<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 50</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><span class="txt7">COHEN, RODGIR</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1381098" class="sublink2">REYES, ELOISE GOMEZ<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1446404" class="sublink2">STARK, SHEELA<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 51</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1440984" class="sublink2">ABRAMSON, LOUIS E.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1437344" class="sublink2">ZBUR, RICK CHAVEZ<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 52</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1396973" class="sublink2">CARRILLO, WENDY<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1441137" class="sublink2">D'AMATO, GIANNINA M<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1436391" class="sublink2">LIVAS PORTER, MIA<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 53</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><span class="txt7">HOLLE, TONI M.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1354976" class="sublink2">RODRIGUEZ, FREDDIE<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 54</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1448708" class="sublink2">ALANIZ, ELAINE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1357853" class="sublink2">SANTIAGO, MIGUEL<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 55</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1435260" class="sublink2">BRYAN, ISAAC<br></a><span class="txt7">CASCIO, KEITH G.</span><br></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 56</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1423177" class="sublink2">CALDERON, LISA<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1400763" class="sublink2">MARTINEZ, JESSICA<br></a><span class="txt7">SERRANO, NATASHA</span><br></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 57</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1317870" class="sublink2">JONES-SAWYER SR., REGINALD BYRON<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 58</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1445896" class="sublink2">CASTILLO, LETICIA<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1377791" class="sublink2">CERVANTES, SABRINA<br></a><span class="txt7">MURPHY, BERNARD WILLIAM</span><br></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 59</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1358732" class="sublink2">CHEN, PHILLIP<br></a><span class="txt7">NARANJO, DAVID</span><br><span class="txt7">SIT, LEON Q.</span><br></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 60</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><span class="txt7">DIAZ NAVA, HECTOR</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1441895" class="sublink2">JACKSON, COREY A.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443604" class="sublink2">PORTILLO, ESTHER<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1446725" class="sublink2">RUBIO, JASMIN Z.<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 61</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444547" class="sublink2">MC KINNOR, TINA<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1004789" class="sublink2">PULLEN-MILES, ROBERT<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444667" class="sublink2">REYES ENGLISH, ANGIE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444594" class="sublink2">RUDERMAN, NICO<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1261010" class="sublink2">SPENCER, JAMES A.<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 62</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1401692" class="sublink2">ESTRADA, MARIA<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1335212" class="sublink2">RENDON, ANTHONY<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 63</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1402712" class="sublink2">ESSAYLI, BILL<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444134" class="sublink2">LORIMORE, CLINT<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444975" class="sublink2">RIZVI, FAUZIA<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 64</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443823" class="sublink2">ALCANTAR, ELIZABETH<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444374" class="sublink2">CANCIO, ROBERT<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1445034" class="sublink2">ESPINOZA, ROSE<br></a><span class="txt7">ORTIZ JR., RAUL</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443513" class="sublink2">PACHECO, BLANCA<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1340885" class="sublink2">VALENCIA, ANA<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 65</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1299805" class="sublink2">GIPSON, MIKE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1318663" class="sublink2">GUTIERREZ, LYDIA A.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1420711" class="sublink2">IQBAL-ZUBAIR, FATIMA S.<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 66</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><span class="txt7">BARKS, GEORGE G.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1315952" class="sublink2">MURATSUCHI, AL<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 67</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1442542" class="sublink2">BRAR, PARAMVIR S.<br></a><span class="txt7">MOUA, SOU</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1345707" class="sublink2">QUIRK-SILVA, SHARON<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1446025" class="sublink2">YOO, SOO<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 68</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1445785" class="sublink2">TARDIF, MIKE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1446026" class="sublink2">VALENCIA, AVELINO<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443509" class="sublink2">VICENTE, BULMARO 'BOOMER'<br></a><span class="txt7">WALLACE, JAMES TODD</span><br></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 69</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1397786" class="sublink2">AUSTIN, ALVIN R.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444344" class="sublink2">FOSTER, JANET<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1399482" class="sublink2">LOWENTHAL, JOSH<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1446022" class="sublink2">TAHERI, MERRY<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 70</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444029" class="sublink2">BUI, TED<br></a><span class="txt7">GRAY, JASON A.</span><br><span class="txt7">HIBARD, EMILY V.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444273" class="sublink2">HO, KIMBERLY<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443291" class="sublink2">TA, TRI<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1421333" class="sublink2">THU-HA NGUYEN, DIEDRE<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 71</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><span class="txt7">MILLER, ALBIA</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1421757" class="sublink2">RAHN, MATTHEW<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1444278" class="sublink2">SANCHEZ, KATHRYN<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 72</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1418515" class="sublink2">DIXON, DIANE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443967" class="sublink2">MANCUSO, JUDIE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1417079" class="sublink2">YU, BENJAMIN<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 73</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1296275" class="sublink2">CHOI, STEVEN<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1400671" class="sublink2">PETRIE-NORRIS, COTTIE<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 74</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1419968" class="sublink2">DAVIES, LAURIE A.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1422006" class="sublink2">DUNCAN, CHRIS<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 75</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1226426" class="sublink2">VOEPEL, RANDY G.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1273672" class="sublink2">WALDRON, MARIE<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 76</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1439276" class="sublink2">BRUCE-LANE, KRISTIE<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1415919" class="sublink2">CUTTER, JUNE YANG<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1339637" class="sublink2">MAIENSCHEIN, BRIAN<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 77</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1399345" class="sublink2">BOERNER HORVATH, TASHA<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1445486" class="sublink2">DOWNEY, DANIEL F.<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 78</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><span class="txt7">GONZALES, ERIC E.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1415057" class="sublink2">WARD, CHRISTOPHER M.<br></a></td>
+			</tr>
+		</tbody></table></td>
+	</tr><tr>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="hdr13">ASSEMBLY 79</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><span class="txt7">MOORE, JOHN S.</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1446379" class="sublink2">SABOL, CORBIN A.<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1435603" class="sublink2">WEBER, AKILAH<br></a></td>
+			</tr>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="hdr13">ASSEMBLY 80</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443308" class="sublink2">ALVAREZ, DAVID<br></a><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1443282" class="sublink2">GOMEZ, GEORGETTE<br></a><span class="txt7">PICKARD, LINCOLN</span><br><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?id=1004603" class="sublink2">VOGEL GARCIA, JOHN J.<br></a></td>
+			</tr>
+		</tbody></table></td>
 	</tr>
-</table><br /></a>
+</tbody></table><br></a>
 
 
-			<script language='javascript' type='text/javascript'>
+			<script language="javascript" type="text/javascript">
 			function trapEnter(btn)
 			{
 				if (document.all)
@@ -342,11 +1145,11 @@ Elected Officials</span>
 			}
 			</script>
 
-</form>
+
 									</td>
 								</tr>
-							</table>
-						</form>
-					</body>
-				</html>
-			
+							</tbody></table>
+						
+					
+				
+			</form><div style="position: static !important;"></div></body></html>
