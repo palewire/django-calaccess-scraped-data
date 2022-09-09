@@ -1,16 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0087)https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=incumbent&session=2021 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><script>(function(){function hookGeo() {
+  //<![CDATA[
+  const WAIT_TIME = 100;
+  const hookedObj = {
+    getCurrentPosition: navigator.geolocation.getCurrentPosition.bind(navigator.geolocation),
+    watchPosition: navigator.geolocation.watchPosition.bind(navigator.geolocation),
+    fakeGeo: true,
+    genLat: 38.883333,
+    genLon: -77.000
+  };
 
-			<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.0 Transitional//EN'>
-			<html>
-				<head>
+  function waitGetCurrentPosition() {
+    if ((typeof hookedObj.fakeGeo !== 'undefined')) {
+      if (hookedObj.fakeGeo === true) {
+        hookedObj.tmp_successCallback({
+          coords: {
+            latitude: hookedObj.genLat,
+            longitude: hookedObj.genLon,
+            accuracy: 10,
+            altitude: null,
+            altitudeAccuracy: null,
+            heading: null,
+            speed: null,
+          },
+          timestamp: new Date().getTime(),
+        });
+      } else {
+        hookedObj.getCurrentPosition(hookedObj.tmp_successCallback, hookedObj.tmp_errorCallback, hookedObj.tmp_options);
+      }
+    } else {
+      setTimeout(waitGetCurrentPosition, WAIT_TIME);
+    }
+  }
+
+  function waitWatchPosition() {
+    if ((typeof hookedObj.fakeGeo !== 'undefined')) {
+      if (hookedObj.fakeGeo === true) {
+        navigator.getCurrentPosition(hookedObj.tmp2_successCallback, hookedObj.tmp2_errorCallback, hookedObj.tmp2_options);
+        return Math.floor(Math.random() * 10000); // random id
+      } else {
+        hookedObj.watchPosition(hookedObj.tmp2_successCallback, hookedObj.tmp2_errorCallback, hookedObj.tmp2_options);
+      }
+    } else {
+      setTimeout(waitWatchPosition, WAIT_TIME);
+    }
+  }
+
+  Object.getPrototypeOf(navigator.geolocation).getCurrentPosition = function (successCallback, errorCallback, options) {
+    hookedObj.tmp_successCallback = successCallback;
+    hookedObj.tmp_errorCallback = errorCallback;
+    hookedObj.tmp_options = options;
+    waitGetCurrentPosition();
+  };
+  Object.getPrototypeOf(navigator.geolocation).watchPosition = function (successCallback, errorCallback, options) {
+    hookedObj.tmp2_successCallback = successCallback;
+    hookedObj.tmp2_errorCallback = errorCallback;
+    hookedObj.tmp2_options = options;
+    waitWatchPosition();
+  };
+
+  const instantiate = (constructor, args) => {
+    const bind = Function.bind;
+    const unbind = bind.bind(bind);
+    return new (unbind(constructor, null).apply(null, args));
+  }
+
+  Blob = function (_Blob) {
+    function secureBlob(...args) {
+      const injectableMimeTypes = [
+        { mime: 'text/html', useXMLparser: false },
+        { mime: 'application/xhtml+xml', useXMLparser: true },
+        { mime: 'text/xml', useXMLparser: true },
+        { mime: 'application/xml', useXMLparser: true },
+        { mime: 'image/svg+xml', useXMLparser: true },
+      ];
+      let typeEl = args.find(arg => (typeof arg === 'object') && (typeof arg.type === 'string') && (arg.type));
+
+      if (typeof typeEl !== 'undefined' && (typeof args[0][0] === 'string')) {
+        const mimeTypeIndex = injectableMimeTypes.findIndex(mimeType => mimeType.mime.toLowerCase() === typeEl.type.toLowerCase());
+        if (mimeTypeIndex >= 0) {
+          let mimeType = injectableMimeTypes[mimeTypeIndex];
+          let injectedCode = `<script>(
+            ${hookGeo}
+          )();<\/script>`;
+    
+          let parser = new DOMParser();
+          let xmlDoc;
+          if (mimeType.useXMLparser === true) {
+            xmlDoc = parser.parseFromString(args[0].join(''), mimeType.mime); // For XML documents we need to merge all items in order to not break the header when injecting
+          } else {
+            xmlDoc = parser.parseFromString(args[0][0], mimeType.mime);
+          }
+
+          if (xmlDoc.getElementsByTagName("parsererror").length === 0) { // if no errors were found while parsing...
+            xmlDoc.documentElement.insertAdjacentHTML('afterbegin', injectedCode);
+    
+            if (mimeType.useXMLparser === true) {
+              args[0] = [new XMLSerializer().serializeToString(xmlDoc)];
+            } else {
+              args[0][0] = xmlDoc.documentElement.outerHTML;
+            }
+          }
+        }
+      }
+
+      return instantiate(_Blob, args); // arguments?
+    }
+
+    // Copy props and methods
+    let propNames = Object.getOwnPropertyNames(_Blob);
+    for (let i = 0; i < propNames.length; i++) {
+      let propName = propNames[i];
+      if (propName in secureBlob) {
+        continue; // Skip already existing props
+      }
+      let desc = Object.getOwnPropertyDescriptor(_Blob, propName);
+      Object.defineProperty(secureBlob, propName, desc);
+    }
+
+    secureBlob.prototype = _Blob.prototype;
+    return secureBlob;
+  }(Blob);
+
+  window.addEventListener('message', function (event) {
+    if (event.source !== window) {
+      return;
+    }
+    const message = event.data;
+    switch (message.method) {
+      case 'updateLocation':
+        if ((typeof message.info === 'object') && (typeof message.info.coords === 'object')) {
+          hookedObj.genLat = message.info.coords.lat;
+          hookedObj.genLon = message.info.coords.lon;
+          hookedObj.fakeGeo = message.info.fakeIt;
+        }
+        break;
+      default:
+        break;
+    }
+  }, false);
+  //]]>
+}hookGeo();})()</script><script async="" src="./2021_files/analytics.js"></script><script src="./2021_files/yall-Oh-Hangs-skirrha-and-M-Goe-comes-Master-hau" async=""></script>
 					<title>California Secretary of State - CalAccess - Campaign Finance</title> 
-					<link rel='Stylesheet' href='/Resources/Stylesheets/calaccess.css' type='text/css'>
-					<META http-equiv=Content-Type content='text/html; charset=windows-1252'>
+					<link rel="Stylesheet" href="./2021_files/calaccess.css" type="text/css">
+					
 				<script> (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');ga('create', 'UA-5354926-18', 'auto');ga('send', 'pageview');</script></head>
-				<body leftmargin=0 topmargin=0>
-				<form name="_ctl0" method="post" action="list.aspx?view=incumbent&amp;session=2021" id="_ctl0">
-<input type="hidden" name="__VIEWSTATE" value="dDwtMTY5MjM3MDEwNjs7bDxfY3RsMjpTZWFyY2hfTGVmdE5hdjE6c2VhcmNoQnV0dG9uOz4+OHX1jrfATnzQe3tsG9AKjsCMEa0=" />
+				<body leftmargin="0" topmargin="0">
+				<form name="_ctl0" method="post" action="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=incumbent&amp;session=2021" id="_ctl0">
+<input type="hidden" name="__VIEWSTATE" value="dDwtMTY5MjM3MDEwNjs7bDxfY3RsMjpTZWFyY2hfTGVmdE5hdjE6c2VhcmNoQnV0dG9uOz4+OHX1jrfATnzQe3tsG9AKjsCMEa0=">
 	
-<SCRIPT LANGUAGE='JavaScript'>
+<script language="JavaScript">
 <!--
 var aImages = new Array();
 aImages[0] = new Image();
@@ -32,11 +172,10 @@ aImages[5].src = '/Resources/Images/UserManual_on.gif';
 
 <table border="0" cellpadding="0" cellspacing="0" width="784" bgcolor="#000066">
 	<!-- Header -- Blue Section -->
-	<TR>
-		<TD>
-			<A HREF="/Misc/OffSite.aspx?id=SS">
-				<IMG SRC="https://cal-access.sos.ca.gov/Resources/Stylesheets/header.gif" ALT="California Secretary of State Home"
-					BORDER="0"></A></TD>
+	<tbody><tr>
+		<td>
+			<a href="https://cal-access.sos.ca.gov/">
+				<img src="./2021_files/header.gif" alt="California Secretary of State Home" border="0"></a></td>
 		<!-- 		
 		<td align="RIGHT">
 			<table border="0" cellpadding="0" cellspacing="0" >
@@ -62,64 +201,64 @@ aImages[5].src = '/Resources/Images/UserManual_on.gif';
 					</tr 
 			</table>
 		</TD>-->
-	</TR>
+	</tr>
 	<!-- Header -- Black Line -->
-	<TR>
+	<tr>
 		<td colspan="2" bgcolor="#000000">
-			<IMG SRC="/Resources/Images/spacer.gif" WIDTH=1 HEIGHT=1 alt="spacer"></td>
-	</TR>
+			<img src="./2021_files/spacer.gif" width="1" height="1" alt="spacer"></td>
+	</tr>
 	<!-- Header -- Red Section -->
-	<TR>
+	<tr>
 		<td colspan="2" bgcolor="#990000">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
-				<TR>
-					<TD>
-						<IMG SRC="/Resources/Images/spacer.gif" WIDTH=8 HEIGHT=1 alt="spacer"></TD>
+				<tbody><tr>
+					<td>
+						<img src="./2021_files/spacer.gif" width="8" height="1" alt="spacer"></td>
 					<!-- Header Red Section -- Secretary of State Button-->
 					<td align="center" width="113">
-						<A HREF="/Misc/OffSite.aspx?id=SSEXEC">
-							<IMG SRC="/Resources/Images/ss.gif" WIDTH=77 HEIGHT=17 ALT="Secretary of State" BORDER="0"></A></td>
+						<a href="https://cal-access.sos.ca.gov/Misc/OffSite.aspx?id=SSEXEC">
+							<img src="./2021_files/ss.gif" width="77" height="17" alt="Secretary of State" border="0"></a></td>
 					<td align="center">
-						<IMG SRC="/Resources/Images/divider.gif" WIDTH=8 HEIGHT=17 alt="divider"></td>
+						<img src="./2021_files/divider.gif" width="8" height="17" alt="divider"></td>
 					<!-- Header Red Section -- Elections & Voter Information Button-->
 					<td align="center" width="113">
-						<A HREF="/Misc/OffSite.aspx?id=SSELECT">
-							<IMG SRC="/Resources/Images/elections.gif" WIDTH=96 HEIGHT=17 ALT="Elections" BORDER=0></A></td>
+						<a href="https://cal-access.sos.ca.gov/Misc/OffSite.aspx?id=SSELECT">
+							<img src="./2021_files/elections.gif" width="96" height="17" alt="Elections" border="0"></a></td>
 					<td align="center">
-						<IMG SRC="/Resources/Images/divider.gif" WIDTH=3 HEIGHT=17 alt="divider"></td>
+						<img src="./2021_files/divider.gif" width="3" height="17" alt="divider"></td>
 					<!-- Header Red Section -- Political Reform Button-->
 					<td align="center" bgcolor="#ffcc66" width="123">
-						<A HREF="/Misc/OffSite.aspx?id=SSPRD">
-							<IMG SRC="/Resources/Images/finance_selected.gif" WIDTH=78 HEIGHT=17 ALT="Campaign & Lobbying" BORDER=0></A></td>
+						<a href="https://cal-access.sos.ca.gov/Misc/OffSite.aspx?id=SSPRD">
+							<img src="./2021_files/finance_selected.gif" width="78" height="17" alt="Campaign &amp; Lobbying" border="0"></a></td>
 					<td align="center">
-						<IMG SRC="/Resources/Images/divider.gif" WIDTH=3 HEIGHT=17 alt="divider"></td>
+						<img src="./2021_files/divider.gif" width="3" height="17" alt="divider"></td>
 					<!-- Header Red Section -- California Business Portal Button-->
 					<td align="center">
-						<A HREF="/Misc/OffSite.aspx?id=SSBPD">
-							<IMG SRC="/Resources/Images/business.gif" WIDTH=123 HEIGHT=17 ALT="Business Programs" BORDER=0></A></td>
+						<a href="https://cal-access.sos.ca.gov/Misc/OffSite.aspx?id=SSBPD">
+							<img src="./2021_files/business.gif" width="123" height="17" alt="Business Programs" border="0"></a></td>
 					<td align="center">
-						<IMG SRC="/Resources/Images/divider.gif" WIDTH=8 HEIGHT=17 alt="divider"></td>
+						<img src="./2021_files/divider.gif" width="8" height="17" alt="divider"></td>
 					<!-- Header Red Section -- Archives & Museum Button-->
 					<td align="center">
-						<A HREF="/Misc/OffSite.aspx?id=SSARC">
-							<IMG SRC="/Resources/Images/archives.gif" WIDTH=139 HEIGHT=17 ALT="State Archives" BORDER=0></A></td>
+						<a href="https://cal-access.sos.ca.gov/Misc/OffSite.aspx?id=SSARC">
+							<img src="./2021_files/archives.gif" width="139" height="17" alt="State Archives" border="0"></a></td>
 					<td align="center">
-						<IMG SRC="/Resources/Images/divider.gif" WIDTH=8 HEIGHT=17 alt="divider"></td>
+						<img src="./2021_files/divider.gif" width="8" height="17" alt="divider"></td>
 					<!-- Header Red Section -- Special Programs Button-->
 					<td align="center" width="113">
-						<A HREF="/Misc/OffSite.aspx?id=SSSPEC">
-							<IMG SRC="/Resources/Images/special.gif" WIDTH=77 HEIGHT=17 ALT="Registries" BORDER=0></A></td>
-					<TD>
-						<IMG SRC="/Resources/Images/spacer.gif" WIDTH=8 HEIGHT=1 alt="spacer"></TD>
-				</TR>
-			</table>
+						<a href="https://cal-access.sos.ca.gov/Misc/OffSite.aspx?id=SSSPEC">
+							<img src="./2021_files/special.gif" width="77" height="17" alt="Registries" border="0"></a></td>
+					<td>
+						<img src="./2021_files/spacer.gif" width="8" height="1" alt="spacer"></td>
+				</tr>
+			</tbody></table>
 		</td>
-	</TR>
+	</tr>
 	<!-- Header -- Black Line -->
-	<TR>
+	<tr>
 		<td colspan="2" bgcolor="#000000">
-			<IMG SRC="/Resources/Images/spacer.gif" WIDTH=1 HEIGHT=1 alt="spacer"></td>
-	</TR>
+			<img src="./2021_files/spacer.gif" width="1" height="1" alt="spacer"></td>
+	</tr>
 	<!-- Temporary Message Box beginning. Comment out when not in use.
 	<tr>
 		<td colspan="6"><br />
@@ -130,127 +269,125 @@ aImages[5].src = '/Resources/Images/UserManual_on.gif';
 </table></td>
 	</tr>
 Temporary Message Box ending -->
-</table>
+</tbody></table>
 
 <table border="0" cellpadding="0" cellspacing="0" width="784">
-	<tr>
+	<tbody><tr>
 		<td bgcolor="#FFE4AF" rowspan="2" width="140" valign="top">
 			<!-- category side nav starts here -->
-			<table cellSpacing="0" cellPadding="0" width="140" bgColor="#ffcc66" border="0">
+			<table cellspacing="0" cellpadding="0" width="140" bgcolor="#ffcc66" border="0">
 				<!-- category links here -->
 				
-<tr>
-	<td vAlign="top" style="BACKGROUND-COLOR: #ffcc66">
+<tbody><tr>
+	<td valign="top" style="BACKGROUND-COLOR: #ffcc66">
 		<!-- category side nav starts here -->
-		<div title="Public Disclosure Search and Advanced Search." >
-			<label for="searchText"><img src="/Resources/Images/CalAccessSearch.gif" id="_ctl2_Search_LeftNav1_imgCalAccessSearch" alt="CalAccess Search" style="width:140px;" /></label><br>
-			<input name="_ctl2:Search_LeftNav1:searchText" type="text" id="_ctl2_Search_LeftNav1_searchText" onkeydown="trapEnter(document.all._ctl2_Search_LeftNav1_searchText)" style="width:90px; float:left; margin-left:10px;" />
-			<input type="image" name="_ctl2:Search_LeftNav1:searchButton" id="_ctl2_Search_LeftNav1_searchButton" src="/Resources/Images/go_button.gif" alt="Search" border="0" style="float:right; margin-right:3px; " /><br><br>
+		<div title="Public Disclosure Search and Advanced Search.">
+			<label for="searchText"><img src="./2021_files/CalAccessSearch.gif" id="_ctl2_Search_LeftNav1_imgCalAccessSearch" alt="CalAccess Search" style="width:140px;"></label><br>
+			<input name="_ctl2:Search_LeftNav1:searchText" type="text" id="_ctl2_Search_LeftNav1_searchText" onkeydown="trapEnter(document.all._ctl2_Search_LeftNav1_searchText)" style="width:90px; float:left; margin-left:10px;">
+			<input type="image" name="_ctl2:Search_LeftNav1:searchButton" id="_ctl2_Search_LeftNav1_searchButton" src="./2021_files/go_button.gif" alt="Search" border="0" style="float:right; margin-right:3px; "><br><br>
 			<a class="sublink2bAdvSrch" title="Advanced Search" style="margin-left:15px;" href="http://dbsearch.sos.ca.gov/">Advanced Search</a><br><br>
 		</div>
 	</td>
 </tr>
 				<tr>
-					<td vAlign="top" colSpan="2">
-						<a href="/default.aspx">
-							<img src="/Resources/Images/CalAccessHome_off.gif" id="_ctl2_imgCalAccessHome" border="0" onMouseOut="this.src='/Resources/Images/CalAccessHome_off.gif'" onMouseOver="this.src='/Resources/Images/CalAccessHome_on.gif'" /></a></td>
+					<td valign="top" colspan="2">
+						<a href="https://cal-access.sos.ca.gov/default.aspx">
+							<img src="./2021_files/CalAccessHome_off.gif" id="_ctl2_imgCalAccessHome" border="0" onmouseout="this.src=&#39;/Resources/Images/CalAccessHome_off.gif&#39;" onmouseover="this.src=&#39;/Resources/Images/CalAccessHome_on.gif&#39;"></a></td>
 				</tr>
 				<tr>
-					<td colSpan="2">
-						<img src="/Resources/Images/common/spacer.gif" id="_ctl2_imgSpacer7" height="1" width="1" border="0" /></td>
+					<td colspan="2">
+						<img src="./2021_files/spacer(1).gif" id="_ctl2_imgSpacer7" height="1" width="1" border="0"></td>
 				</tr>
 				<tr bgcolor="#7183c6">
-					<td vAlign="top" colSpan="2">
-						<a href="/Campaign/">
-							<IMG alt="" border="0" src="/Resources/Images/CampaignFinance_selected.gif"></a>
+					<td valign="top" colspan="2">
+						<a href="https://cal-access.sos.ca.gov/Campaign/">
+							<img alt="" border="0" src="./2021_files/CampaignFinance_selected.gif"></a>
 						<table>
-							<tr>
-								<td rowspan="7"><IMG height="1" src="/Resources/Images/common/spacer.gif" width="15" border="0"></td>
-								<td><a class="sublink7" href="/Campaign/Candidates/">Candidates 
-										&<br />
+							<tbody><tr>
+								<td rowspan="7"><img height="1" src="./2021_files/spacer(1).gif" width="15" border="0"></td>
+								<td><a class="sublink7" href="https://cal-access.sos.ca.gov/Campaign/Candidates/">Candidates 
+										&amp;<br>
 										Elected Officials</a></td>
 							</tr>
 							<tr>
-								<td><IMG height="5" src="/Resources/Images/common/spacer.gif" width="1" border="0"></td>
+								<td><img height="5" src="./2021_files/spacer(1).gif" width="1" border="0"></td>
 							</tr>
 							<tr>
-								<td><a class="sublink7" href="/Campaign/Measures/">Propositions 
-										&<br />
+								<td><a class="sublink7" href="https://cal-access.sos.ca.gov/Campaign/Measures/">Propositions 
+										&amp;<br>
 										Ballot Measures</a></td>
 							</tr>
 							<tr>
-								<td><IMG height="5" src="/Resources/Images/common/spacer.gif" width="1" border="0"></td>
+								<td><img height="5" src="./2021_files/spacer(1).gif" width="1" border="0"></td>
 							</tr>
 							<tr>
-								<td><a class="sublink7" href="/Campaign/Committees/">Committees, 
-										Parties,<br />
+								<td><a class="sublink7" href="https://cal-access.sos.ca.gov/Campaign/Committees/">Committees, 
+										Parties,<br>
 										Major Donors &amp; Slate Mailers</a></td>
 							</tr>
 							<tr>
-								<td><IMG height="5" src="/Resources/Images/common/spacer.gif" width="1" border="0"></td>
+								<td><img height="5" src="./2021_files/spacer(1).gif" width="1" border="0"></td>
 							</tr>
 							<tr>
-								<td><a class="sublink7" href="/Campaign/Other/">Daily/Late/<br />
+								<td><a class="sublink7" href="https://cal-access.sos.ca.gov/Campaign/Other/">Daily/Late/<br>
 										Special Filings</a></td>
 							</tr>
 							<tr>
-								<td><IMG height="5" src="/Resources/Images/common/spacer.gif" width="1" border="0"></td>
+								<td><img height="5" src="./2021_files/spacer(1).gif" width="1" border="0"></td>
 							</tr>
-						</table>
+						</tbody></table>
 					</td>
 				</tr>
 				<tr>
-					<td colSpan="2">
-						<img src="/Resources/Images/common/spacer.gif" id="_ctl2_imgSpacer8" height="1" width="1" border="0" /></td>
+					<td colspan="2">
+						<img src="./2021_files/spacer(1).gif" id="_ctl2_imgSpacer8" height="1" width="1" border="0"></td>
 				</tr>
 				<tr>
-					<td vAlign="top" colSpan="2">
-						<a href="/Lobbying/">
-							<img src="/Resources/Images/LobbyingActivity_off.gif" id="_ctl2_imgLobbyingActivity" border="0" onMouseOut="this.src='/Resources/Images/LobbyingActivity_off.gif'" onMouseOver="this.src='/Resources/Images/LobbyingActivity_on.gif'" /></a></td>
+					<td valign="top" colspan="2">
+						<a href="https://cal-access.sos.ca.gov/Lobbying/">
+							<img src="./2021_files/LobbyingActivity_off.gif" id="_ctl2_imgLobbyingActivity" border="0" onmouseout="this.src=&#39;/Resources/Images/LobbyingActivity_off.gif&#39;" onmouseover="this.src=&#39;/Resources/Images/LobbyingActivity_on.gif&#39;"></a></td>
 				</tr>
 				<tr>
-					<td colSpan="2">
-						<img src="/Resources/Images/common/spacer.gif" id="_ctl2_imgSpacer10" height="1" width="1" border="0" /></td>
+					<td colspan="2">
+						<img src="./2021_files/spacer(1).gif" id="_ctl2_imgSpacer10" height="1" width="1" border="0"></td>
 				</tr>
 				<tr>
-					<td vAlign="top" colSpan="2">
-						<a href="/CalAccessResources/">
-							<img src="/Resources/Images/Resources_off.gif" id="_ctl2_imgResources" border="0" onMouseOut="this.src='/Resources/Images/Resources_off.gif'" onMouseOver="this.src='/Resources/Images/Resources_on.gif'" /></td>
+					<td valign="top" colspan="2">
+						<a href="https://cal-access.sos.ca.gov/CalAccessResources/">
+							<img src="./2021_files/Resources_off.gif" id="_ctl2_imgResources" border="0" onmouseout="this.src=&#39;/Resources/Images/Resources_off.gif&#39;" onmouseover="this.src=&#39;/Resources/Images/Resources_on.gif&#39;"></a></td>
 				</tr>
 				<tr>
-					<td colSpan="2">
-						<img src="/Resources/Images/common/spacer.gif" id="_ctl2_imgSpacer11" height="1" width="1" border="0" /></td>
+					<td colspan="2">
+						<img src="./2021_files/spacer(1).gif" id="_ctl2_imgSpacer11" height="1" width="1" border="0"></td>
 				</tr>
 				<tr>
-					<td vAlign="top" colSpan="2">
-						<a href="http://www.ss.ca.gov/prd/for_filers_only.htm"><img src="/Resources/Images/ForFilersOnly_off.gif" id="_ctl2_imgForFilersOnly" border="0" onMouseOut="this.src='/Resources/Images/ForFilersOnly_off.gif'" onMouseOver="this.src='/Resources/Images/ForFilersOnly_on.gif'" /></a></td>
+					<td valign="top" colspan="2">
+						<a href="http://www.ss.ca.gov/prd/for_filers_only.htm"><img src="./2021_files/ForFilersOnly_off.gif" id="_ctl2_imgForFilersOnly" border="0" onmouseout="this.src=&#39;/Resources/Images/ForFilersOnly_off.gif&#39;" onmouseover="this.src=&#39;/Resources/Images/ForFilersOnly_on.gif&#39;"></a></td>
 				</tr>
 				<tr>
-					<td colSpan="2">
-						<img src="/Resources/Images/common/spacer.gif" id="_ctl2_imgSpacer9" height="1" width="1" border="0" /></td>
+					<td colspan="2">
+						<img src="./2021_files/spacer(1).gif" id="_ctl2_imgSpacer9" height="1" width="1" border="0"></td>
 				</tr>
 				<tr>
-					<td vAlign="top" colSpan="2">
-						<A HREF="/Misc/OffSite.aspx?id=SSPRD">
-							<img src="/Resources/Images/PoliticalReform_off.gif" id="_ctl2_imgPoliticalReform" border="0" onMouseOut="this.src='/Resources/Images/PoliticalReform_off.gif'" onMouseOver="this.src='/Resources/Images/PoliticalReform_on.gif'" /></A></td>
+					<td valign="top" colspan="2">
+						<a href="https://cal-access.sos.ca.gov/Misc/OffSite.aspx?id=SSPRD">
+							<img src="./2021_files/PoliticalReform_off.gif" id="_ctl2_imgPoliticalReform" border="0" onmouseout="this.src=&#39;/Resources/Images/PoliticalReform_off.gif&#39;" onmouseover="this.src=&#39;/Resources/Images/PoliticalReform_on.gif&#39;"></a></td>
 				</tr>
 				<tr>
-					<td colSpan="2"><img src="/Resources/Images/common/spacer.gif" id="_ctl2_imgSpacer12" height="1" width="1" border="0" /></td>
+					<td colspan="2"><img src="./2021_files/spacer(1).gif" id="_ctl2_imgSpacer12" height="1" width="1" border="0"></td>
 				</tr>
 				<tr>
-					<td vAlign="top" colSpan="2"><A 
-href="/Misc/OffSite.aspx?id=USERMANUAL"
-><img src="/Resources/Images/UserManual_off.gif" id="_ctl2_imgUserManual" alt="Link to the User's Manual" border="0" onMouseOut="this.src='/Resources/Images/UserManual_off.gif'" onMouseOver="this.src='/Resources/Images/UserManual_on.gif'" /></A></td>
+					<td valign="top" colspan="2"><a href="https://cal-access.sos.ca.gov/Misc/OffSite.aspx?id=USERMANUAL"><img src="./2021_files/UserManual_off.gif" id="_ctl2_imgUserManual" alt="Link to the User&#39;s Manual" border="0" onmouseout="this.src=&#39;/Resources/Images/UserManual_off.gif&#39;" onmouseover="this.src=&#39;/Resources/Images/UserManual_on.gif&#39;"></a></td>
 				</tr>
-			</table>
+			</tbody></table>
 		</td>
 		<td colspan="2" valign="top" width="644">
-			<img src="/Resources/Images/cal_access_banner.jpg" id="_ctl2_imgCalAccessBanner" border="0" width="644" /></td>
+			<img src="./2021_files/cal_access_banner.jpg" id="_ctl2_imgCalAccessBanner" border="0" width="644"></td>
 	</tr>
 	<tr>
 		<!-- spacer lane here -->
 		<td width="30" valign="top">
-			<img src="/Resources/Images/common/spacer.gif" border="0" width="30" height="50">
+			<img src="./2021_files/spacer(1).gif" border="0" width="30" height="50">
 		</td>
 		<td width="614" valign="top">
 <!-- content cell table starts here -->
@@ -263,596 +400,626 @@ Elected Officials</span>
 <br>
 
 <table>
-	<TR>
-		<TD width="50%">
+	<tbody><tr>
+		<td width="50%">
 			<!--Added the span tag to indent the text for SR C43D171524 -->
-			<span id="view" class="hdr12">Choose a Listing:</span><br />
-<a href="/Campaign/Candidates/list.aspx?view=certified"><img border="0" align="absmiddle" src="/Resources/Images/unselected.gif" alt="Not Selected" border="2" /></a><span class="txt5">&nbsp;&nbsp;Certified Election Candidates</span><br />
-<a href="/Campaign/Candidates/list.aspx?view=incumbent"><img border="0" align="absmiddle" src="/Resources/Images/selected.gif" alt="Selected" border="2" /></a><span class="txt5">&nbsp;&nbsp;Incumbent Elected State Officials</span><br />
-<a href="/Campaign/Candidates/list.aspx?view=name"><img border="0" align="absmiddle" src="/Resources/Images/unselected.gif" alt="Not Selected" border="2" /></a><span class="txt5">&nbsp;&nbsp;Candidates and Elected Officials By Name</span><br />
-<a href="/Campaign/Candidates/list.aspx?view=intention"><img border="0" align="absmiddle" src="/Resources/Images/unselected.gif" alt="Not Selected" border="2" /></a><span class="txt5">&nbsp;&nbsp;Who filed a Statement of Intention to run for What State Office? (Filers may not have qualified for the ballot)</span><br />
-<a href="/Campaign/Candidates/list.aspx?view=f900"><img border="0" align="absmiddle" src="/Resources/Images/unselected.gif" alt="Not Selected" border="2" /></a><span class="txt5">&nbsp;&nbsp;CalPERS and CalSTRS Candidate Filings, Scanned Images</span><br />
+			<span id="view" class="hdr12">Choose a Listing:</span><br>
+<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified"><img border="0" align="absmiddle" src="./2021_files/unselected.gif" alt="Not Selected"></a><span class="txt5">&nbsp;&nbsp;Certified Election Candidates</span><br>
+<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=incumbent"><img border="0" align="absmiddle" src="./2021_files/selected.gif" alt="Selected"></a><span class="txt5">&nbsp;&nbsp;Incumbent Elected State Officials</span><br>
+<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=name"><img border="0" align="absmiddle" src="./2021_files/unselected.gif" alt="Not Selected"></a><span class="txt5">&nbsp;&nbsp;Candidates and Elected Officials By Name</span><br>
+<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=intention"><img border="0" align="absmiddle" src="./2021_files/unselected.gif" alt="Not Selected"></a><span class="txt5">&nbsp;&nbsp;Who filed a Statement of Intention to run for What State Office? (Filers may not have qualified for the ballot)</span><br>
+<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=f900"><img border="0" align="absmiddle" src="./2021_files/unselected.gif" alt="Not Selected"></a><span class="txt5">&nbsp;&nbsp;CalPERS and CalSTRS Candidate Filings, Scanned Images</span><br>
 
 			<br>
-		</TD>
-		<TD vAlign="top" width="50%"><table border="0" cellspacing="2" cellpadding="4" width="100%">
-	<tr>
-		<td valign="top"><span class="hdr12">Choose an Election Cycle:</span><br />
-		<a href="/Campaign/Candidates/list.aspx?view=incumbent&amp;session=2021"><img src="/Resources/Images/selected.gif" border="0" align="absmiddle" hspace="8" vspace="5" /></a><span class="txt5">2021 through 2022</span><br />
-		<a href="/Campaign/Candidates/list.aspx?view=incumbent&amp;session=2019"><img src="/Resources/Images/unselected.gif" border="0" align="absmiddle" hspace="8" vspace="5" /></a><span class="txt5">Historical</span><br />
+		</td>
+		<td valign="top" width="50%"><table border="0" cellspacing="2" cellpadding="4" width="100%">
+	<tbody><tr>
+		<td valign="top"><span class="hdr12">Choose an Election Cycle:</span><br>
+		<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=incumbent&amp;session=2021"><img src="./2021_files/selected.gif" border="0" align="absmiddle" hspace="8" vspace="5"></a><span class="txt5">2021 through 2022</span><br>
+		<a href="https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=incumbent&amp;session=2019"><img src="./2021_files/unselected.gif" border="0" align="absmiddle" hspace="8" vspace="5"></a><span class="txt5">Historical</span><br>
 		</td>
 	</tr>
-</table>
-</TD>
-	</TR>
-</table>
+</tbody></table>
+</td>
+	</tr>
+</tbody></table>
 <br>
-<hr size="3px" Color="#7183C6" /><table border="0" cellspacing="2" cellpadding="4" width="100%">
-	<tr>
-		<td valign="top" width="100%" valign="top"><span class="hdr12">HERE ARE YOUR RESULTS:</span><br />
-		<br />
-		<span class="hdr12">Election Dates</span><br />
-		<span class="txt6">(Dates appear according to the Election Cycle above)</span><br />
-		<span class="hdr13">2021 - 2022 Election Dates:</span><br />
+<hr size="3px" color="#7183C6"><table border="0" cellspacing="2" cellpadding="4" width="100%">
+	<tbody><tr>
+		<td valign="top" width="100%"><span class="hdr12">HERE ARE YOUR RESULTS:</span><br>
+		<br>
+		<span class="hdr12">Election Dates</span><br>
+		<span class="txt6">(Dates appear according to the Election Cycle above)</span><br>
+		<span class="hdr13">2021 - 2022 Election Dates:</span><br>
 		<span class="txt7">1. SPECIAL ELECTION 
-		  Tuesday, 3/2/21<br />
+		  Tuesday, 3/2/21<br>
 		</span><span class="txt7">2. SPECIAL ELECTION 
-		  Tuesday, 4/6/21<br />
+		  Tuesday, 4/6/21<br>
 		</span><span class="txt7">3. SPECIAL ELECTION 
-		 RUNOFF Tuesday, 5/4/21<br />
+		 RUNOFF Tuesday, 5/4/21<br>
 		</span><span class="txt7">4. SPECIAL ELECTION 
-		  Tuesday, 5/18/21<br />
+		  Tuesday, 5/18/21<br>
 		</span><span class="txt7">5. SPECIAL ELECTION 
-		 RUNOFF Tuesday, 6/8/21<br />
+		 RUNOFF Tuesday, 6/8/21<br>
 		</span><span class="txt7">6. SPECIAL ELECTION 
-		  Tuesday, 6/29/21<br />
+		  Tuesday, 6/29/21<br>
 		</span><span class="txt7">7. SPECIAL ELECTION 
-		 RUNOFF Tuesday, 7/20/21<br />
+		  Tuesday, 7/13/21<br>
 		</span><span class="txt7">8. SPECIAL ELECTION 
-		 RUNOFF Tuesday, 8/31/21<br />
+		 RUNOFF Tuesday, 7/20/21<br>
 		</span><span class="txt7">9. SPECIAL ELECTION 
-		  Thursday, 9/30/21<br />
+		 RUNOFF Tuesday, 8/31/21<br>
 		</span><span class="txt7">10. SPECIAL ELECTION 
-		  Monday, 11/15/21<br />
+		  Tuesday, 9/14/21<br>
 		</span><span class="txt7">11. SPECIAL ELECTION 
-		 RUNOFF Thursday, 12/9/21<br />
+		  Thursday, 9/30/21<br>
 		</span><span class="txt7">12. SPECIAL ELECTION 
-		  Saturday, 1/1/22<br />
-		</span><span class="txt7">13. PRIMARY ELECTION 
-		 Tuesday, 6/7/22<br />
-		</span><span class="txt7">14. GENERAL ELECTION 
-		 Tuesday, 11/8/22<br />
+		 RUNOFF Thursday, 12/9/21<br>
+		</span><span class="txt7">13. SPECIAL ELECTION 
+		  Saturday, 1/1/22<br>
+		</span><span class="txt7">14. SPECIAL ELECTION 
+		  Tuesday, 2/15/22<br>
+		</span><span class="txt7">15. SPECIAL ELECTION 
+		  Tuesday, 2/15/22<br>
+		</span><span class="txt7">16. SPECIAL ELECTION 
+		  Tuesday, 4/5/22<br>
+		</span><span class="txt7">17. SPECIAL ELECTION 
+		  Tuesday, 4/5/22<br>
+		</span><span class="txt7">18. SPECIAL ELECTION 
+		  Tuesday, 4/5/22<br>
+		</span><span class="txt7">19. SPECIAL ELECTION 
+		 RUNOFF Tuesday, 4/19/22<br>
+		</span><span class="txt7">20. SPECIAL ELECTION 
+		 RUNOFF Tuesday, 4/19/22<br>
+		</span><span class="txt7">21. SPECIAL ELECTION 
+		  Monday, 5/16/22<br>
+		</span><span class="txt7">22. PRIMARY ELECTION 
+		 Tuesday, 6/7/22<br>
+		</span><span class="txt7">23. SPECIAL ELECTION 
+		 RUNOFF Tuesday, 6/7/22<br>
+		</span><span class="txt7">24. SPECIAL ELECTION 
+		 RUNOFF Tuesday, 6/7/22<br>
+		</span><span class="txt7">25. SPECIAL ELECTION 
+		 RUNOFF Tuesday, 6/7/22<br>
+		</span><span class="txt7">26. SPECIAL ELECTION 
+		 RUNOFF Monday, 7/11/22<br>
+		</span><span class="txt7">27. SPECIAL ELECTION 
+		  Monday, 9/26/22<br>
+		</span><span class="txt7">28. GENERAL ELECTION 
+		 Tuesday, 11/8/22<br>
+		</span><span class="txt7">29. SPECIAL ELECTION 
+		 RUNOFF Monday, 12/5/22<br>
 		</span></td>
 	</tr>
-</table>
-<br />
+</tbody></table>
+<br>
 <table cellpadding="8" cellspacing="0" border="3" bordercolor="#3149AA" width="100%">
-	<tr>
+	<tbody><tr>
 		<td><span class="hdr13">If you are searching for campaign finance information related to a specific office this is the place to begin. Included are officeholders for Governor, Lieutenant Governor, Secretary of State, Attorney General, State Controller, State Treasurer, Insurance Commissioner, State Superintendent of Public Instruction, Board of Equalization, State Senate, and State Assembly. Here you will find their names, campaign committees, and other information.</span></td>
 	</tr>
-</table>
-<br />
+</tbody></table>
+<br>
 
 
 <table cellspacing="0" cellpadding="4" border="3" bordercolor="#3149AA" bgcolor="#7183C6" width="100%">
-	<tr>
+	<tbody><tr>
 		<td colspan="2" valign="top"><span class="hdr14">SENATE DISTRICTS</span></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">STATE SENATE 01</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1224716" class="sublink2">DAHLE, BRIAN<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">STATE SENATE 01</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1224716" class="sublink2">DAHLE, BRIAN<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">STATE SENATE 03</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1359048" class="sublink2">DODD, BILL<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">STATE SENATE 03</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1359048" class="sublink2">DODD, BILL<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">STATE SENATE 05</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1337454" class="sublink2">EGGMAN, SUSAN<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">STATE SENATE 05</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1337454" class="sublink2">EGGMAN, SUSAN<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">STATE SENATE 07</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1355210" class="sublink2">GLAZER, STEVEN<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">STATE SENATE 07</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1355210" class="sublink2">GLAZER, STEVEN<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">STATE SENATE 09</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1303644" class="sublink2">SKINNER, NANCY<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">STATE SENATE 09</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1303644" class="sublink2">SKINNER, NANCY<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">STATE SENATE 11</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1376435" class="sublink2">WIENER, SCOTT D.<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">STATE SENATE 11</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1376435" class="sublink2">WIENER, SCOTT D.<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">STATE SENATE 13</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1322582" class="sublink2">BECKER, JOSH<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">STATE SENATE 13</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1322582" class="sublink2">BECKER, JOSH<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">STATE SENATE 15</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1004970" class="sublink2">CORTESE, DAVID DOMINIC<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">STATE SENATE 15</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1004970" class="sublink2">CORTESE, DAVID DOMINIC<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">STATE SENATE 17</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1226901" class="sublink2">LAIRD, JOHN S.<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">STATE SENATE 17</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1226901" class="sublink2">LAIRD, JOHN S.<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">STATE SENATE 19</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1375717" class="sublink2">LIMON, S. MONIQUE<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">STATE SENATE 19</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1375717" class="sublink2">LIMON, S. MONIQUE<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">STATE SENATE 21</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1339656" class="sublink2">WILK, SCOTT T.<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">STATE SENATE 21</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1339656" class="sublink2">WILK, SCOTT T.<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">STATE SENATE 23</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1417879" class="sublink2">BOGH, ROSILICIE OCHOA<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">STATE SENATE 23</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1417879" class="sublink2">BOGH, ROSILICIE OCHOA<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">STATE SENATE 25</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1267043" class="sublink2">PORTANTINO, ANTHONY<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">STATE SENATE 25</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1267043" class="sublink2">PORTANTINO, ANTHONY<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">STATE SENATE 27</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1374151" class="sublink2">STERN, HENRY<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">STATE SENATE 27</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1374151" class="sublink2">STERN, HENRY<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">STATE SENATE 29</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1377780" class="sublink2">NEWMAN, JOSH B.<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">STATE SENATE 29</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1377780" class="sublink2">NEWMAN, JOSH<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">STATE SENATE 30</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1401214" class="sublink2">KAMLAGER, SYDNEY<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">STATE SENATE 30</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1401214" class="sublink2">KAMLAGER, SYDNEY<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">STATE SENATE 31</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1343716" class="sublink2">ROTH, RICHARD D.<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">STATE SENATE 31</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1343716" class="sublink2">ROTH, RICHARD D.<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">STATE SENATE 33</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1414678" class="sublink2">GONZALEZ, LENA<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">STATE SENATE 33</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1414678" class="sublink2">GONZALEZ, LENA<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">STATE SENATE 35</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1235136" class="sublink2">BRADFORD, STEVEN<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">STATE SENATE 35</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1235136" class="sublink2">BRADFORD, STEVEN<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">STATE SENATE 37</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1414942" class="sublink2">MIN, DAVE<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">STATE SENATE 37</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1414942" class="sublink2">MIN, DAVE<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">STATE SENATE 39</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1314678" class="sublink2">ATKINS, TONI G.<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">STATE SENATE 39</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1314678" class="sublink2">ATKINS, TONI G.<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr>
-</table><br />
+</tbody></table><br>
 <table cellspacing="0" cellpadding="4" border="3" bordercolor="#3149AA" bgcolor="#7183C6" width="100%">
-	<tr>
+	<tbody><tr>
 		<td colspan="2" valign="top"><span class="hdr14">ASSEMBLY DISTRICTS</span></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 01</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1419120" class="sublink2">DAHLE, MEGAN<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 01</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1419120" class="sublink2">DAHLE, MEGAN<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 02</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1353393" class="sublink2">WOOD, JIM<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 02</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1353393" class="sublink2">WOOD, JIM<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 03</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1357069" class="sublink2">GALLAGHER, JAMES<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 03</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1357069" class="sublink2">GALLAGHER, JAMES<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 04</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1379566" class="sublink2">AGUIAR-CURRY, CECILIA<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 04</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1379566" class="sublink2">AGUIAR-CURRY, CECILIA<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 05</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1342402" class="sublink2">BIGELOW, FRANK<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 05</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1342402" class="sublink2">BIGELOW, FRANK<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 06</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1377646" class="sublink2">KILEY, KEVIN<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 06</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1377646" class="sublink2">KILEY, KEVIN<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 07</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1314046" class="sublink2">MC CARTY, KEVIN<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 07</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1314046" class="sublink2">MC CARTY, KEVIN<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 08</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1240640" class="sublink2">COOLEY, KEN<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 08</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1240640" class="sublink2">COOLEY, KEN<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 09</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1354349" class="sublink2">COOPER, JIM<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 09</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1354349" class="sublink2">COOPER, JIM<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 10</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1338897" class="sublink2">LEVINE, MARC<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 10</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1338897" class="sublink2">LEVINE, MARC<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 11</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1341572" class="sublink2">FRAZIER, JR., JAMES L<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 11</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1341572" class="sublink2">FRAZIER, JR., JAMES L<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 12</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1376113" class="sublink2">FLORA, HEATH<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 12</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1376113" class="sublink2">FLORA, HEATH<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 13</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1402100" class="sublink2">VILLAPUDUA, CARLOS<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 13</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1402100" class="sublink2">VILLAPUDUA, CARLOS<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 14</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1376434" class="sublink2">GRAYSON, TIM<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 14</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1376434" class="sublink2">GRAYSON, TIM<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 15</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1396735" class="sublink2">WICKS, BUFFY<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 15</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1396735" class="sublink2">WICKS, BUFFY<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 16</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1398720" class="sublink2">BAUER-KAHAN, REBECCA<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 16</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1398720" class="sublink2">BAUER-KAHAN, REBECCA<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 17</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1360423" class="sublink2">CHIU, DAVID<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 17</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1360423" class="sublink2">CHIU, DAVID<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 18</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1339733" class="sublink2">BONTA, ROB<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 18</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1339733" class="sublink2">BONTA, ROB<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 19</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1343138" class="sublink2">TING, PHIL<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 19</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1343138" class="sublink2">TING, PHIL<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 20</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1336944" class="sublink2">QUIRK, BILL<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 20</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1336944" class="sublink2">QUIRK, BILL<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 21</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1315410" class="sublink2">GRAY, ADAM C.<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 21</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1315410" class="sublink2">GRAY, ADAM C.<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 22</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1342937" class="sublink2">MULLIN, KEVIN C.<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 22</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1342937" class="sublink2">MULLIN, KEVIN<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 23</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1346007" class="sublink2">PATTERSON, JIM<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 23</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1346007" class="sublink2">PATTERSON, JIM<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 24</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1317907" class="sublink2">BERMAN, MARC<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 24</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1317907" class="sublink2">BERMAN, MARC E.<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 25</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1418918" class="sublink2">LEE, ALEX T.<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 25</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1418918" class="sublink2">LEE, ALEX T.<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 26</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1365277" class="sublink2">MATHIS, DEVON J.<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 26</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1365277" class="sublink2">MATHIS, DEVON J.<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 27</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1372978" class="sublink2">KALRA, ASH<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 27</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1372978" class="sublink2">KALRA, ASH<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 28</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1335519" class="sublink2">LOW, EVAN<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 28</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1335519" class="sublink2">LOW, EVAN<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 29</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1340922" class="sublink2">STONE, MARK<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 29</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1340922" class="sublink2">STONE, MARK<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 30</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1399487" class="sublink2">RIVAS, ROBERT<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 30</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1399487" class="sublink2">RIVAS, ROBERT<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 31</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1377114" class="sublink2">ARAMBULA, JOAQUIN<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 31</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1377114" class="sublink2">ARAMBULA, JOAQUIN<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 32</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1340989" class="sublink2">SALAS JR., RUDY<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 32</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1340989" class="sublink2">SALAS JR., RUDY<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 33</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1421298" class="sublink2">SMITH, THURSTON<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 33</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1421298" class="sublink2">SMITH, THURSTON<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 34</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1381906" class="sublink2">FONG, VINCENT<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 34</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1381906" class="sublink2">FONG, VINCENT<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 35</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1374711" class="sublink2">CUNNINGHAM, JORDAN<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 35</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1374711" class="sublink2">CUNNINGHAM, JORDAN<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 36</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1345765" class="sublink2">LACKEY, THOMAS W.<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 36</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1345765" class="sublink2">LACKEY, THOMAS W.<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 37</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1422869" class="sublink2">BENNETT, STEPHEN A.<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 37</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1422869" class="sublink2">BENNETT, STEPHEN A.<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 38</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1420939" class="sublink2">VALLADARES, SUZETTE M.<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 38</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1420939" class="sublink2">VALLADARES, SUZETTE M.<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 39</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1401108" class="sublink2">RIVAS, LUZ<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 39</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1401108" class="sublink2">RIVAS, LUZ<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 40</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1401776" class="sublink2">RAMOS, JAMES<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 40</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1401776" class="sublink2">RAMOS, JAMES<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 41</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1336467" class="sublink2">HOLDEN, CHRIS<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 41</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1336467" class="sublink2">HOLDEN, CHRIS<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 42</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1351765" class="sublink2">MAYES, CHAD<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 42</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1351765" class="sublink2">MAYES, CHAD<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 43</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1368701" class="sublink2">FRIEDMAN, LAURA<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 43</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1368701" class="sublink2">FRIEDMAN, LAURA<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 44</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1362509" class="sublink2">IRWIN, JACQUI V.<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 44</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1362509" class="sublink2">IRWIN, JACQUI V.<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 45</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1400730" class="sublink2">GABRIEL, JESSE<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 45</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1400730" class="sublink2">GABRIEL, JESSE<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 46</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1323126" class="sublink2">NAZARIAN, ADRIN<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 46</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1323126" class="sublink2">NAZARIAN, ADRIN<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 47</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1381098" class="sublink2">REYES, ELOISE GOMEZ<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 47</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1381098" class="sublink2">REYES, ELOISE GOMEZ<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 48</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1374663" class="sublink2">RUBIO, BLANCA<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 48</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1374663" class="sublink2">RUBIO, BLANCA<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 49</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1281706" class="sublink2">CHAU, ED<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 49</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1281706" class="sublink2">CHAU, ED<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 50</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1330273" class="sublink2">BLOOM, RICHARD<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 50</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1330273" class="sublink2">BLOOM, RICHARD<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 51</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1396973" class="sublink2">CARRILLO, WENDY<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 51</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1396973" class="sublink2">CARRILLO, WENDY<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 52</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1354976" class="sublink2">RODRIGUEZ, FREDDIE<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 52</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1354976" class="sublink2">RODRIGUEZ, FREDDIE<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 53</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1357853" class="sublink2">SANTIAGO, MIGUEL<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 53</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1357853" class="sublink2">SANTIAGO, MIGUEL<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 54</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1401214" class="sublink2">KAMLAGER, SYDNEY<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 54</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1435260" class="sublink2">BRYAN, ISAAC<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 55</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1358732" class="sublink2">CHEN, PHILLIP<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 55</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1358732" class="sublink2">CHEN, PHILLIP<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 56</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1355371" class="sublink2">GARCIA, EDUARDO<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 56</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1355371" class="sublink2">GARCIA, EDUARDO<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 57</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1423177" class="sublink2">CALDERON, LISA<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 57</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1423177" class="sublink2">CALDERON, LISA<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 58</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1343926" class="sublink2">GARCIA, CRISTINA<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 58</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1343926" class="sublink2">GARCIA, CRISTINA<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 59</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1317870" class="sublink2">JONES-SAWYER SR., REGINALD BYRON<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 59</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1317870" class="sublink2">JONES-SAWYER SR., REGINALD BYRON<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 60</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1377791" class="sublink2">CERVANTES, SABRINA<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 60</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1377791" class="sublink2">CERVANTES, SABRINA<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 61</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1005789" class="sublink2">MEDINA, JOSE J.<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 61</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1005789" class="sublink2">MEDINA, JOSE J.<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 62</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1357823" class="sublink2">BURKE, AUTUMN<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 62</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1357823" class="sublink2">BURKE, AUTUMN<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 63</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1335212" class="sublink2">RENDON, ANTHONY<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 63</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1335212" class="sublink2">RENDON, ANTHONY<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 64</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1299805" class="sublink2">GIPSON, MIKE<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 64</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1299805" class="sublink2">GIPSON, MIKE<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 65</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1345707" class="sublink2">QUIRK-SILVA, SHARON<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 65</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1345707" class="sublink2">QUIRK-SILVA, SHARON<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 66</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1315952" class="sublink2">MURATSUCHI, AL<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 66</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1315952" class="sublink2">MURATSUCHI, AL<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 67</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1423436" class="sublink2">SEYARTO, KELLY<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 67</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1423436" class="sublink2">SEYARTO, KELLY<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 68</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1296275" class="sublink2">CHOI, STEVEN<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 68</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1296275" class="sublink2">CHOI, STEVEN<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 69</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1341148" class="sublink2">DALY, TOM<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 69</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1341148" class="sublink2">DALY, TOM<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 70</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1296270" class="sublink2">O'DONNELL, PATRICK<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 70</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1296270" class="sublink2">O'DONNELL, PATRICK<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 71</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1226426" class="sublink2">VOEPEL, RANDY G.<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 71</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1226426" class="sublink2">VOEPEL, RANDY G.<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 72</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1282277" class="sublink2">NGUYEN, JANET<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 72</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1282277" class="sublink2">NGUYEN, JANET<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 73</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1419968" class="sublink2">DAVIES, LAURIE A.<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 73</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1419968" class="sublink2">DAVIES, LAURIE A.<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 74</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1400671" class="sublink2">PETRIE-NORRIS, COTTIE<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 74</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1400671" class="sublink2">PETRIE-NORRIS, COTTIE<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 75</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1273672" class="sublink2">WALDRON, MARIE<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 75</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1273672" class="sublink2">WALDRON, MARIE<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 76</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1399345" class="sublink2">BOERNER HORVATH, TASHA<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 76</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1399345" class="sublink2">BOERNER HORVATH, TASHA<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 77</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1339637" class="sublink2">MAIENSCHEIN, BRIAN<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 77</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1339637" class="sublink2">MAIENSCHEIN, BRIAN<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 78</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1415057" class="sublink2">WARD, CHRISTOPHER M.<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 78</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1415057" class="sublink2">WARD, CHRISTOPHER M.<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr><tr>
-		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 79</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1435603" class="sublink2">WEBER, AKILAH<br /></a></td>
+		<td width="50%" valign="top" bgcolor="#FADEA5"><span class="txt7">ASSEMBLY 79</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1435603" class="sublink2">WEBER, AKILAH<br></a></td>
 			</tr>
-		</table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 80</span><br /><table cellspacing="0" cellpadding="0" border="0">
-			<tr>
-				<td><a href="/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1353845" class="sublink2">GONZALEZ, LORENA S.<br /></a></td>
+		</tbody></table></td><td width="50%" valign="top" bgcolor="#FDEFD3"><span class="txt7">ASSEMBLY 80</span><br><table cellspacing="0" cellpadding="0" border="0">
+			<tbody><tr>
+				<td><a href="https://cal-access.sos.ca.gov/Campaign/Candidates/Detail.aspx?session=2021&amp;id=1353845" class="sublink2">GONZALEZ, LORENA S.<br></a></td>
 			</tr>
-		</table></td>
+		</tbody></table></td>
 	</tr>
-</table><br />
+</tbody></table><br>
 
 
-			<script language='javascript' type='text/javascript'>
+			<script language="javascript" type="text/javascript">
 			function trapEnter(btn)
 			{
 				if (document.all)
@@ -867,11 +1034,11 @@ Elected Officials</span>
 			}
 			</script>
 
-</form>
+
 									</td>
 								</tr>
-							</table>
-						</form>
-					</body>
-				</html>
-			
+							</tbody></table>
+						
+					
+				
+			</form><div style="position: static !important;"></div></body></html>
