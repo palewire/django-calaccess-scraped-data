@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         settings: ['postgresql',]
-        python: ['3.8', '3.9']
+        python: ['3.9']
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v4
@@ -21,6 +21,16 @@ jobs:
           python-version: ${{ matrix.python }}
           cache: 'pipenv'
 
+      - id: install-pipenv
+        name: Install pipenv
+        run: curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
+        shell: bash
+
+      - id: install-python-dependencies
+        name: Install Python dependencies
+        run: pipenv sync --dev
+        shell: bash
+
       - name: Set up PostgreSQL
         uses: harmon758/postgresql-action@v1
         with:
@@ -28,16 +38,6 @@ jobs:
           postgresql: calaccess_scraped
           postgresql user: postgres
           postgresql password: postgres
-
-      - id: install-pipenv
-        name: Install pipenv
-        run: curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
-        shell: bash
-
-      - id: sync-pipfile
-        name: Sync pipfile
-        run: pipenv sync --dev
-        shell: bash
 
       - name: Test
         run: |
