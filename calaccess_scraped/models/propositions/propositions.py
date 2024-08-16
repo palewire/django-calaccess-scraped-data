@@ -17,11 +17,11 @@ class Proposition(BaseScrapedModel):
     # '2003 Recall Question'
     name = models.CharField(
         verbose_name="proposition name",
-        max_length=200
+        max_length=1000
     )
     scraped_id = models.CharField(
         verbose_name="proposition identification number",
-        max_length=200
+        max_length=1000
     )
     election = models.ForeignKey(
         'PropositionElection',

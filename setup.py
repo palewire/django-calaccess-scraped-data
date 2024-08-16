@@ -42,7 +42,7 @@ setup(
     version='3.2.0',
     author='California Civic Data Coalition',
     author_email='b@palewi.re',
-    url='http://django-calaccess.californiacivicdata.org',
+    url='https://www.californiacivicdata.org',
     description='A Django app to scrape campaign-finance data from '
                 'the California Secretary of State’s CAL-ACCESS website',
     long_description=read('README.rst'),
@@ -73,7 +73,6 @@ setup(
     ),
     project_urls={
         'Project': 'https://www.californiacivicdata.org/',
-        'Documentation': 'https://django-calaccess.californiacivicdata.org',
         'Funding': 'https://www.californiacivicdata.org/about/',
         'Source': 'https://github.com/california-civic-data-coalition/django-calaccess-scraped-data',
         'Testing': 'https://github.com/california-civic-data-coalition/django-calaccess-scraped-data/actions/workflows/tests.yaml',
