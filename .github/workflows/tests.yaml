@@ -10,15 +10,16 @@ jobs:
     strategy:
       matrix:
         settings: ['postgresql',]
-        python: [3.8, 3.9]
+        python: ['3.8', '3.9']
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
+          cache: 'pipenv'
 
       - name: Set up PostgreSQL
         uses: harmon758/postgresql-action@v1
@@ -30,19 +31,8 @@ jobs:
 
       - id: install-pipenv
         name: Install pipenv
-        run: |
-          python -m pip install --upgrade --no-cache-dir pip
-          python -m pip install --no-cache-dir pipenv
+        run: curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
         shell: bash
-
-      - id: cache-pipenv
-        name: Cache pipenv
-        uses: actions/cache@v2
-        with:
-          path: ~/.local/share/virtualenvs
-          key: ${{ runner.os }}-pipenv-${{ hashFiles('Pipfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pipenv-
 
       - id: sync-pipfile
         name: Sync pipfile
