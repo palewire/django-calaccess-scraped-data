@@ -52,7 +52,7 @@ setup(
     zip_safe=False,  # because we're including static files
     cmdclass={'test': TestCommand},
     install_requires=(
-        'django>=3.2',
+        'django==4.0.*',
         'pytz',
         'bs4',
         'selenium',
