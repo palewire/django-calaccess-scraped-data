@@ -42,7 +42,7 @@ class Command(CalAccessCommand):
             election_id = int(os.path.basename(html_path).replace(".html", ""))
             url = f"https://cal-access.sos.ca.gov/Campaign/Candidates/list.aspx?view=certified&electNav={election_id}"
 
-            links = soup.find_all('a', href=re.compile(r'^.*&electNav=\d+'))
+            links = soup.find_all('a', href=re.compile(r'^.*electNav=\d+'))
             this_link = [link for link in links if 'electNav={}'.format(election_id) in link['href']][-1]
 
             name = this_link.find_next_sibling('span').text.strip()
